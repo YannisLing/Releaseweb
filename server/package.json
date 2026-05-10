@@ -1,0 +1,15 @@
+{
+  "name": "sedona-method-server",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "sql.js": "^1.10.3",
+    "sqlite3": "^6.0.1"
+  }
+}

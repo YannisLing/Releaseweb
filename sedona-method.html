@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圣多娜释放法 - 情绪释放练习</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2em; margin-bottom: 8px; font-weight: 300; }
+        .header p { font-size: 1em; opacity: 0.9; }
+        .nav-tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .nav-tab {
+            flex: 1;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            background: #f5f5f5;
+            border: none;
+            font-size: 0.95em;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+        .nav-tab:hover { background: #e8e8e8; }
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            font-weight: 600;
+            border-bottom: 3px solid #667eea;
+        }
+        .content { padding: 30px; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .section-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .emotion-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .emotion-category {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid;
+        }
+        .emotion-category:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        .emotion-category h3 {
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+        }
+        .emotion-category.wannianjuhui { border-color: #9e9e9e; }
+        .emotion-category.wannianjuhui h3 { color: #757575; }
+        .emotion-category.beiku { border-color: #e91e63; }
+        .emotion-category.beiku h3 { color: #e91e63; }
+        .emotion-category.kongju { border-color: #ff5722; }
+        .emotion-category.kongju h3 { color: #ff5722; }
+        .emotion-category.tanqiu { border-color: #ff9800; }
+        .emotion-category.tanqiu h3 { color: #ff9800; }
+        .emotion-category.fennu { border-color: #f44336; }
+        .emotion-category.fennu h3 { color: #f44336; }
+        .emotion-category.zirenzihao { border-color: #3f51b5; }
+        .emotion-category.zirenzihao h3 { color: #3f51b5; }
+        .emotion-category.wuwei { border-color: #4caf50; }
+        .emotion-category.wuwei h3 { color: #4caf50; }
+        .emotion-category.jieda { border-color: #00bcd4; }
+        .emotion-category.jieda h3 { color: #00bcd4; }
+        .emotion-category.pinghe { border-color: #9c27b0; }
+        .emotion-category.pinghe h3 { color: #9c27b0; }
+        .emotion-list { display: flex; flex-wrap: wrap; gap: 6px; }
+        .emotion-tag {
+            padding: 5px 10px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .emotion-tag:hover { background: #667eea; color: white; }
+        .emotion-tag.selected { background: #667eea; color: white; }
+        .selected-emotions {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .selected-emotions h4 { color: #667eea; margin-bottom: 10px; }
+        .selected-tags { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; }
+        .selected-tag {
+            padding: 8px 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .selected-tag .remove { cursor: pointer; font-size: 1.2em; opacity: 0.8; }
+        .selected-tag .remove:hover { opacity: 1; }
+        .placeholder-text { color: #999; font-style: italic; }
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 40px;
+            right: 40px;
+            height: 3px;
+            background: #e0e0e0;
+        }
+        .step-dot {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #999;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        .step-dot.active { background: #667eea; color: white; transform: scale(1.2); }
+        .step-dot.completed { background: #4caf50; color: white; }
+        .step { display: none; }
+        .step.active { display: block; animation: fadeIn 0.5s ease; }
+        .step h2 { font-size: 1.6em; color: #333; margin-bottom: 15px; text-align: center; }
+        .step p { color: #666; font-size: 1em; line-height: 1.7; margin-bottom: 20px; text-align: center; }
+        .question-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .question-box h3 { font-size: 1.3em; color: #667eea; margin-bottom: 12px; }
+        .question-text {
+            font-size: 1.4em;
+            color: #333;
+            font-weight: 500;
+            margin: 20px 0;
+        }
+        .affirmation { font-style: italic; color: #555; font-size: 1.1em; line-height: 1.6; }
+        .reminder-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .reminder-box p { color: #856404; font-size: 0.9em; margin: 0; text-align: left; }
+        .btn-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); }
+        .btn-secondary { background: #f0f0f0; color: #666; }
+        .btn-secondary:hover { background: #e0e0e0; }
+        .btn-success { background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); color: white; }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4); }
+        .breathe-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 25px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2em;
+            transition: transform 4s ease-in-out;
+        }
+        .breathe-circle.inhale { transform: scale(1.3); }
+        .breathe-circle.hold { transform: scale(1.3); }
+        .breathe-circle.exhale { transform: scale(1); }
+        .completion-message { text-align: center; padding: 30px 20px; }
+        .completion-message h2 { color: #4caf50; font-size: 1.8em; margin-bottom: 15px; }
+        .celebration { font-size: 3.5em; margin-bottom: 15px; }
+        .intro-box {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 12px 12px 0;
+        }
+        .intro-box p { text-align: left; margin-bottom: 8px; font-size: 0.95em; }
+        .intro-box p:last-child { margin-bottom: 0; }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+        .record-form {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #555; font-size: 0.95em; margin-bottom: 8px; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .intensity-slider { display: flex; align-items: center; gap: 15px; }
+        .intensity-slider input[type="range"] {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            background: #e0e0e0;
+            -webkit-appearance: none;
+            padding: 0;
+        }
+        .intensity-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+        }
+        .intensity-value { min-width: 50px; text-align: center; font-weight: 600; color: #667eea; }
+        .history-list { max-height: 500px; overflow-y: auto; }
+        .history-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease;
+        }
+        .history-item:hover { transform: translateX(5px); }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .history-date { color: #667eea; font-weight: 600; font-size: 0.95em; }
+        .history-delete { color: #f44336; cursor: pointer; font-size: 0.9em; opacity: 0.7; }
+        .history-delete:hover { opacity: 1; }
+        .history-emotions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+        .history-emotion-tag { padding: 4px 10px; background: #f0f0f0; border-radius: 15px; font-size: 0.8em; color: #666; }
+        .history-intensity { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .history-intensity-bar { flex: 1; height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
+        .history-intensity-fill { height: 100%; background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%); border-radius: 4px; }
+        .history-note { color: #666; font-size: 0.9em; font-style: italic; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e0e0e0; }
+        .history-empty { text-align: center; padding: 50px 20px; color: #999; }
+        .history-empty-icon { font-size: 4em; margin-bottom: 15px; }
+        .stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-number { font-size: 2em; font-weight: 300; }
+        .stat-label { font-size: 0.85em; opacity: 0.9; margin-top: 5px; }
+        .clear-history { text-align: center; margin-top: 20px; }
+        .keyword-hint {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #2e7d32;
+        }
+        @media (max-width: 600px) {
+            .emotion-grid { grid-template-columns: 1fr; }
+            .nav-tab { padding: 12px 5px; font-size: 0.85em; }
+            .header h1 { font-size: 1.6em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕊️ 圣多娜释放法</h1>
+            <p>通过四个简单的问题，释放你的情绪负担</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('practice')">释放练习</button>
+            <button class="nav-tab" onclick="switchTab('emotions')">情绪表</button>
+            <button class="nav-tab" onclick="switchTab('records')">记录</button>
+        </div>
+
+        <div class="content">
+            <div class="tab-content active" id="tab-practice">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+
+                <div class="step-indicator">
+                    <div class="step-dot active" data-step="1">1</div>
+                    <div class="step-dot" data-step="2">2</div>
+                    <div class="step-dot" data-step="3">3</div>
+                    <div class="step-dot" data-step="4">4</div>
+                    <div class="step-dot" data-step="5">5</div>
+                </div>
+
+                <div class="step active" data-step="1">
+                    <h2>第一步：感受情绪</h2>
+                    <div class="intro-box">
+                        <p>欢迎来到圣多娜释放法。这是一种简单而强大的情绪释放技术。</p>
+                        <p>找一个安静舒适的地方，闭上眼睛，感受你现在的情绪。</p>
+                    </div>
+                    <div class="question-box">
+                        <h3>🌟 准备开始</h3>
+                        <p class="affirmation">回想一个令你不能释怀的场景，你有什么感觉？</p>
+                    </div>
+                    <div class="selected-emotions">
+                        <h4>当前选择的情绪：</h4>
+                        <div class="selected-tags" id="currentEmotions">
+                            <span class="placeholder-text">请在"情绪表"标签页选择你想要释放的情绪</span>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="switchTab('emotions')">← 选择情绪</button>
+                        <button class="btn btn-primary" onclick="goToStep(2)">开始释放 →</button>
+                    </div>
+                </div>
+
+                <div class="step" data-step="2">
+                    <h2>第二个问题</h2>
+                    <div class="question-box">
+                        <h3>🤔 真诚地问自己</h3>
+                        <p class="question-text">"你能让这种感觉离开吗？"</p>
+                    </div>
+                    <p>闭上眼睛，深呼吸几次。<br>真正地感受这个情绪，注意它在身体上的位置。</p>
+                    <div class="reminder-box">
+                        <p>💡 提示：无论是"能"还是"不能"，都没有对错。继续问下一个问题。</p>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="goToStep(1)">← 上一步</button>
+                        <button class="btn btn-primary" onclick="goToStep(3)">继续 →</button>
+                    </div>
+                </div>
+
+                <div class="step" data-step="3">
+                    <h2>第三个问题</h2>
+                    <div class="question-box">
+                        <h3>🙏 现在问自己</h3>
+                        <p class="question-text">"如果能，你愿意让它离开吗？"</p>
+                    </div>
+                    <p>如果你发现自己不愿意放手，问问自己：<br>「是什么让我紧抓不放？」</p>
+                    <div class="reminder-box">
+                        <p>💡 提示：放手并不意味着失去。放手意味着你选择不再被这个情绪困扰，给自己自由。</p>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="goToStep(2)">← 上一步</button>
+                        <button class="btn btn-primary" onclick="goToStep(4)">愿意 →</button>
+                    </div>
+                </div>
+
+                <div class="step" data-step="4">
+                    <h2>第四个问题</h2>
+                    <div class="question-box">
+                        <h3>⏳ 最后问自己</h3>
+                        <p class="question-text">"你什么时候让它离开呢？"</p>
+                    </div>
+                    <p>给自己一点时间感受这个情绪。<br>注意它在身体上的位置，观察它的形状和颜色。</p>
+                    <div class="breathe-circle" id="breatheCircle">
+                        <span id="breatheText">吸气...</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="stopBreathe(); goToStep(3)">← 上一步</button>
+                        <button class="btn btn-success" onclick="stopBreathe(); goToStep(5)">现在就让它离开</button>
+                    </div>
+                </div>
+
+                <div class="step" data-step="5">
+                    <h2>释放完成</h2>
+                    <div class="completion-message">
+                        <div class="celebration">🕊️✨🌈</div>
+                        <h2>做得好！</h2>
+                        <p>你刚刚完成了一次圣多娜释放法练习。</p>
+                        <p>继续感受，还有没有其他感觉浮现？如果有，继续2、3、4步。</p>
+                        <p style="margin-top: 15px; font-style: italic; color: #888;">"记住，无论什么感觉，它都是一个感觉，可以抓着，可以放手，选择权在自己。"</p>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="resetPractice()">再次练习</button>
+                        <button class="btn btn-primary" onclick="switchTab('records')">保存记录</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-emotions">
+                <h2 class="section-title">📋 圣多娜情绪表（完整版）</h2>
+                <p style="text-align: center; color: #666; margin-bottom: 25px;">点击选择你想要释放的情绪，然后进入释放练习<br><small>关键词可以帮助你快速定位情绪类别</small></p>
+
+                <div class="selected-emotions">
+                    <h4>已选择的情绪：</h4>
+                    <div class="selected-tags" id="selectedTags">
+                        <span class="placeholder-text">点击下方情绪标签进行选择</span>
+                    </div>
+                </div>
+
+                <div class="emotion-grid">
+                    <div class="emotion-category wanianjuhui">
+                        <h3>😶 万念俱灰</h3>
+                        <div class="emotion-list">
+                            <span class="emotion-tag" data-emotion="无聊">无聊</span>
+                            <span class="emotion-tag" data-emotion="赢不了">赢不了</span>
+                            <span class="emotion-tag" data-emotion="粗心大意">粗心大意</span>
+                            <span class="emotion-tag" data-emotion="冷淡">冷淡</span>
+                            <span class="emotion-tag" data-emotion="被隔离">被隔离</span>
+                            <span class="emotion-tag" data-emotion="心如死灰">心如死灰</span>
+                            <span class="emotion-tag" data-emotion="被挫败">被挫败</span>
+                            <span class="emotion-tag" data-emotion="沮丧">沮丧</span>
+                            <span class="emotion-tag" data-emotion="泄气">泄气</span>
+                            <span class="emotion-tag" data-emotion="凄凉">凄凉</span>
+                            <span class="emotion-tag" data-emotion="孤独">孤独</span>
+                            <span class="emotion-tag" data-emotion="绝望">绝望</span>
+                            <span class="emotion-tag" data-emotion="气馁">气馁</span>
+                            <span class="emotion-tag" data-emotion="幻想破灭">幻想破灭</span>
+                            <span class="emotion-tag" data-emotion="死定了">死定了</span>
+                            <span class="emotion-tag" data-emotion="精疲力竭">精疲力竭</span>
+                            <span class="emotion-tag" data-emotion="失败">失败</span>
+                            <span class="emotion-tag" data-emotion="健忘">健忘</span>
+                            <span class="emotion-tag" data-emotion="没出息">没出息</span>
+                            <span class="emotion-tag" data-emotion="放弃">放弃</span>
+                            <span class="emotion-tag" data-emotion="铁石心肠">铁石心肠</span>
+                            <span class="emotion-tag" data-emotion="无可救药">无可救药</span>
+                            <span class="emotion-tag" data-emotion="我不行">我不行</span>
+                            <span class="emotion-tag" data-emotion="我不在乎">我不在乎</span>
+                            <span class="emotion-tag" data-emotion="怠慢">怠慢</span>
+                            <span class="emotion-tag" data-emotion="优柔寡断">优柔寡断</span>
+                            <span class="emotion-tag" data-emotion="漠不关心">漠不关心</span>
+                            <span class="emotion-tag" data-emotion="没有存在感">没有存在感</span>
+                            <span class="emotion-tag" data-emotion="太迟了">太迟了</span>
+                            <span class="emotion-tag" data-emotion="懒惰">懒惰</span>
+                            <span class="emotion-tag" data-emotion="无精打采">无精打采</span>
+                            <span class="emotion-tag" data-emotion="迷茫">迷茫</span>
+                            <span class="emotion-tag" data-emotion="消极">消极</span>
+                            <span class="emotion-tag" data-emotion="麻木">麻木</span>
+                            <span class="emotion-tag" data-emotion="不堪重负">不堪重负</span>
+                            <span class="emotion-tag" data-emotion="无能为力">无能为力</span>
+                            <span class="emotion-tag" data-emotion="无奈">无奈</span>
+                            <span class="emotion-tag" data-emotion="震惊">震惊</span>
+                            <span class="emotion-tag" data-emotion="停滞不前">停滞不前</span>
+                            <span class="emotion-tag" data-emotion="冷酷无情">冷酷无情</span>
+                            <span class="emotion-tag" data-emotion="漫无目的">漫无目的</span>
+                            <span class="emotion-tag" data-emotion="不值得">不值得</span>
+                        </div>
+                        <div class="keyword-hint">💡 关键词：我不行、停滞不前</div>
+                    </div>
+
+                    <div class="emotion-category beiku">
+                        <h3>😢 悲苦</h3>
+                        <div class="emotion-list">
+                            <span class="emotion-tag" data-emotion="被遗弃">被遗弃</span>
+                            <span class="emotion-tag" data-emotion="被辱骂">被辱骂</span>
+                            <span class="emotion-tag" data-emotion="被指责">被指责</span>
+                            <span class="emotion-tag" data-emotion="极度痛苦">极度痛苦</span>
+                            <span class="emotion-tag" data-emotion="羞耻">羞耻</span>
+                            <span class="emotion-tag" data-emotion="被背叛">被背叛</span>
+                            <span class="emotion-tag" data-emotion="忧郁">忧郁</span>
+                            <span class="emotion-tag" data-emotion="被欺骗">被欺骗</span>
+                            <span class="emotion-tag" data-emotion="失望">失望</span>
+                            <span class="emotion-tag" data-emotion="心烦意乱">心烦意乱</span>
+                            <span class="emotion-tag" data-emotion="尴尬">尴尬</span>
+                            <span class="emotion-tag" data-emotion="被遗忘">被遗忘</span>
+                            <span class="emotion-tag" data-emotion="内疚">内疚</span>
+                            <span class="emotion-tag" data-emotion="心碎">心碎</span>
+                            <span class="emotion-tag" data-emotion="头痛">头痛</span>
+                            <span class="emotion-tag" data-emotion="苦恼">苦恼</span>
+                            <span class="emotion-tag" data-emotion="无助">无助</span>
+                            <span class="emotion-tag" data-emotion="痛苦">痛苦</span>
+                            <span class="emotion-tag" data-emotion="被忽视">被忽视</span>
+                            <span class="emotion-tag" data-emotion="信心不足">信心不足</span>
+                            <span class="emotion-tag" data-emotion="伤心欲绝">伤心欲绝</span>
+                            <span class="emotion-tag" data-emotion="不公平">不公平</span>
+                            <span class="emotion-tag" data-emotion="被冷落">被冷落</span>
+                            <span class="emotion-tag" data-emotion="渴望">渴望</span>
+                            <span class="emotion-tag" data-emotion="失落">失落</span>
+                            <span class="emotion-tag" data-emotion="哀伤">哀伤</span>
+                            <span class="emotion-tag" data-emotion="被误解">被误解</span>
+                            <span class="emotion-tag" data-emotion="哀悼">哀悼</span>
+                            <span class="emotion-tag" data-emotion="没人爱我">没人爱我</span>
+                            <span class="emotion-tag" data-emotion="怜悯">怜悯</span>
+                            <span class="emotion-tag" data-emotion="我好可怜">我好可怜</span>
+                            <span class="emotion-tag" data-emotion="遗憾">遗憾</span>
+                            <span class="emotion-tag" data-emotion="被拒绝">被拒绝</span>
+                            <span class="emotion-tag" data-emotion="懊悔">懊悔</span>
+                            <span class="emotion-tag" data-emotion="难过">难过</span>
+                            <span class="emotion-tag" data-emotion="悲哀">悲哀</span>
+                            <span class="emotion-tag" data-emotion="痛不欲生">痛不欲生</span>
+                            <span class="emotion-tag" data-emotion="不被爱">不被爱</span>
+                            <span class="emotion-tag" data-emotion="脆弱">脆弱</span>
+                            <span class="emotion-tag" data-emotion="受伤">受伤</span>
+                        </div>
+                        <div class="keyword-hint">💡 关键词：我好可怜、为什么是我</div>
+                    </div>
+
+                    <div class="emotion-category kongju">
+                        <h3>😨 恐惧</h3>
+                        <div class="emotion-list">
+                            <span class="emotion-tag" data-emotion="担忧">担忧</span>
+                            <span class="emotion-tag" data-emotion="不安">不安</span>
+                            <span class="emotion-tag" data-emotion="小心谨慎">小心谨慎</span>
+                            <span class="emotion-tag" data-emotion="怯懦">怯懦</span>
+                            <span class="emotion-tag" data-emotion="防御心理">防御心理</span>
+                            <span class="emotion-tag" data-emotion="不信任">不信任</span>
+                            <span class="emotion-tag" data-emotion="怀疑">怀疑</span>
+                            <span class="emotion-tag" data-emotion="惧怕">惧怕</span>
+                            <span class="emotion-tag" data-emotion="逃避">逃避</span>
+                            <span class="emotion-tag" data-emotion="不祥的预感">不祥的预感</span>
+                            <span class="emotion-tag" data-emotion="狂乱">狂乱</span>
+                            <span class="emotion-tag" data-emotion="犹豫不决">犹豫不决</span>
+                            <span class="emotion-tag" data-emotion="惊骇">惊骇</span>
+                            <span class="emotion-tag" data-emotion="歇斯底里">歇斯底里</span>
+                            <span class="emotion-tag" data-emotion="拘束">拘束</span>
+                            <span class="emotion-tag" data-emotion="缺乏安全感">缺乏安全感</span>
+                            <span class="emotion-tag" data-emotion="恶心">恶心</span>
+                            <span class="emotion-tag" data-emotion="紧张">紧张</span>
+                            <span class="emotion-tag" data-emotion="恐慌">恐慌</span>
+                            <span class="emotion-tag" data-emotion="麻痹">麻痹</span>
+                            <span class="emotion-tag" data-emotion="偏执">偏执</span>
+                            <span class="emotion-tag" data-emotion="被吓到">被吓到</span>
+                            <span class="emotion-tag" data-emotion="害羞">害羞</span>
+                            <span class="emotion-tag" data-emotion="怯场">怯场</span>
+                            <span class="emotion-tag" data-emotion="迷信">迷信</span>
+                            <span class="emotion-tag" data-emotion="惊恐">惊恐</span>
+                            <span class="emotion-tag" data-emotion="被威胁">被威胁</span>
+                            <span class="emotion-tag" data-emotion="胆小">胆小</span>
+                            <span class="emotion-tag" data-emotion="陷入困境">陷入困境</span>
+                            <span class="emotion-tag" data-emotion="心神不宁">心神不宁</span>
+                            <span class="emotion-tag" data-emotion="不自在">不自在</span>
+                            <span class="emotion-tag" data-emotion="容易受伤">容易受伤</span>
+                            <span class="emotion-tag" data-emotion="想要逃跑">想要逃跑</span>
+                            <span class="emotion-tag" data-emotion="担心">担心</span>
+                        </div>
+                        <div class="keyword-hint">💡 关键词：缺乏安全感、想要逃跑</div>
+                    </div>
+
+                    <div class="emotion-category tanqiu">
+                        <h3>🤑 贪求</h3>
+                        <div class="emotion-list">
+                            <span class="emotion-tag" data-emotion="放纵">放纵</span>
+                            <span class="emotion-tag" data-emotion="期盼">期盼</span>
+                            <span class="emotion-tag" data-emotion="迫不及待">迫不及待</span>
+                            <span class="emotion-tag" data-emotion="强迫">强迫</span>
+                            <span class="emotion-tag" data-emotion="渴望">渴望</span>
+                            <span class="emotion-tag" data-emotion="苛刻">苛刻</span>
+                            <span class="emotion-tag" data-emotion="不坦诚">不坦诚</span>
+                            <span class="emotion-tag" data-emotion="紧迫感">紧迫感</span>
+                            <span class="emotion-tag" data-emotion="嫉妒">嫉妒</span>
+                            <span class="emotion-tag" data-emotion="剥削">剥削</span>
+                            <span class="emotion-tag" data-emotion="过分迷恋">过分迷恋</span>
+                            <span class="emotion-tag" data-emotion="暴怒">暴怒</span>
+                            <span class="emotion-tag" data-emotion="失意">失意</span>
+                            <span class="emotion-tag" data-emotion="贪吃暴食">贪吃暴食</span>
+                            <span class="emotion-tag" data-emotion="贪婪">贪婪</span>
+                            <span class="emotion-tag" data-emotion="囤积">囤积</span>
+                            <span class="emotion-tag" data-emotion="饥饿">饥饿</span>
+                            <span class="emotion-tag" data-emotion="我想要">我想要</span>
+                            <span class="emotion-tag" data-emotion="不耐烦">不耐烦</span>
+                            <span class="emotion-tag" data-emotion="焦躁">焦躁</span>
+                            <span class="emotion-tag" data-emotion="占有欲">占有欲</span>
+                            <span class="emotion-tag" data-emotion="吝啬">吝啬</span>
+                            <span class="emotion-tag" data-emotion="必须得有">必须得有</span>
+                            <span class="emotion-tag" data-emotion="从来都不够">从来都不够</span>
+                            <span class="emotion-tag" data-emotion="痴迷">痴迷</span>
+                            <span class="emotion-tag" data-emotion="骄纵任性">骄纵任性</span>
+                            <span class="emotion-tag" data-emotion="固执己见">固执己见</span>
+                            <span class="emotion-tag" data-emotion="无情">无情</span>
+                            <span class="emotion-tag" data-emotion="自私">自私</span>
+                            <span class="emotion-tag" data-emotion="荒唐放肆">荒唐放肆</span>
+                        </div>
+                        <div class="keyword-hint">💡 关键词：我想要、必须得有</div>
+                    </div>
+
+                    <div class="emotion-category fennu">
+                        <h3>😠 愤怒</h3>
+                        <div class="emotion-list">
+                            <span class="emotion-tag" data-emotion="生硬粗暴">生硬粗暴</span>
+                            <span class="emotion-tag" data-emotion="争强好斗">争强好斗</span>
+                            <span class="emotion-tag" data-emotion="恼怒">恼怒</span>
+                            <span class="emotion-tag" data-emotion="爱争辩">爱争辩</span>
+                            <span class="emotion-tag" data-emotion="好战">好战</span>
+                            <span class="emotion-tag" data-emotion="怒发冲冠">怒发冲冠</span>
+                            <span class="emotion-tag" data-emotion="阴郁">阴郁</span>
+                            <span class="emotion-tag" data-emotion="刻薄">刻薄</span>
+                            <span class="emotion-tag" data-emotion="挑衅">挑衅</span>
+                            <span class="emotion-tag" data-emotion="苛求">苛求</span>
+                            <span class="emotion-tag" data-emotion="破坏性">破坏性</span>
+                            <span class="emotion-tag" data-emotion="嫌恶">嫌恶</span>
+                            <span class="emotion-tag" data-emotion="暴躁">暴躁</span>
+                            <span class="emotion-tag" data-emotion="凶猛">凶猛</span>
+                            <span class="emotion-tag" data-emotion="气愤">气愤</span>
+                            <span class="emotion-tag" data-emotion="狂怒">狂怒</span>
+                            <span class="emotion-tag" data-emotion="严厉">严厉</span>
+                            <span class="emotion-tag" data-emotion="憎恨">憎恨</span>
+                            <span class="emotion-tag" data-emotion="敌意">敌意</span>
+                            <span class="emotion-tag" data-emotion="不耐烦">不耐烦</span>
+                            <span class="emotion-tag" data-emotion="愤愤不平">愤愤不平</span>
+                            <span class="emotion-tag" data-emotion="易怒">易怒</span>
+                            <span class="emotion-tag" data-emotion="妒忌">妒忌</span>
+                            <span class="emotion-tag" data-emotion="疯狂">疯狂</span>
+                            <span class="emotion-tag" data-emotion="卑鄙">卑鄙</span>
+                            <span class="emotion-tag" data-emotion="残忍">残忍</span>
+                            <span class="emotion-tag" data-emotion="任性">任性</span>
+                            <span class="emotion-tag" data-emotion="一意孤行">一意孤行</span>
+                            <span class="emotion-tag" data-emotion="叛逆">叛逆</span>
+                            <span class="emotion-tag" data-emotion="怨恨">怨恨</span>
+                            <span class="emotion-tag" data-emotion="抵抗">抵抗</span>
+                            <span class="emotion-tag" data-emotion="粗鲁">粗鲁</span>
+                            <span class="emotion-tag" data-emotion="野蛮">野蛮</span>
+                            <span class="emotion-tag" data-emotion="五内俱焚">五内俱焚</span>
+                            <span class="emotion-tag" data-emotion="郁闷">郁闷</span>
+                            <span class="emotion-tag" data-emotion="怀恨在心">怀恨在心</span>
+                            <span class="emotion-tag" data-emotion="着急">着急</span>
+                            <span class="emotion-tag" data-emotion="倔强">倔强</span>
+                            <span class="emotion-tag" data-emotion="愠怒">愠怒</span>
+                            <span class="emotion-tag" data-emotion="复仇心切">复仇心切</span>
+                            <span class="emotion-tag" data-emotion="恶毒">恶毒</span>
+                            <span class="emotion-tag" data-emotion="暴力">暴力</span>
+                            <span class="emotion-tag" data-emotion="邪恶">邪恶</span>
+                        </div>
+                        <div class="keyword-hint">💡 关键词：着急、一意孤行</div>
+                    </div>
+
+                    <div class="emotion-category zirenzihao">
+                        <h3>😏 自尊自傲</h3>
+                        <div class="emotion-list">
+                            <span class="emotion-tag" data-emotion="无可指责">无可指责</span>
+                            <span class="emotion-tag" data-emotion="超然离群">超然离群</span>
+                            <span class="emotion-tag" data-emotion="自负">自负</span>
+                            <span class="emotion-tag" data-emotion="固执己见">固执己见</span>
+                            <span class="emotion-tag" data-emotion="自夸">自夸</span>
+                            <span class="emotion-tag" data-emotion="洋洋自得">洋洋自得</span>
+                            <span class="emotion-tag" data-emotion="逞能">逞能</span>
+                            <span class="emotion-tag" data-emotion="轻蔑">轻蔑</span>
+                            <span class="emotion-tag" data-emotion="酷">酷</span>
+                            <span class="emotion-tag" data-emotion="挑剔">挑剔</span>
+                            <span class="emotion-tag" data-emotion="鄙弃">鄙弃</span>
+                            <span class="emotion-tag" data-emotion="傲慢专断">傲慢专断</span>
+                            <span class="emotion-tag" data-emotion="假谦虚">假谦虚</span>
+                            <span class="emotion-tag" data-emotion="伪善">伪善</span>
+                            <span class="emotion-tag" data-emotion="幸灾乐祸">幸灾乐祸</span>
+                            <span class="emotion-tag" data-emotion="傲慢">傲慢</span>
+                            <span class="emotion-tag" data-emotion="自以为是">自以为是</span>
+                            <span class="emotion-tag" data-emotion="虚伪">虚伪</span>
+                            <span class="emotion-tag" data-emotion="冷冰冰">冷冰冰</span>
+                            <span class="emotion-tag" data-emotion="孤僻">孤僻</span>
+                            <span class="emotion-tag" data-emotion="评头论足">评头论足</span>
+                            <span class="emotion-tag" data-emotion="假装博学">假装博学</span>
+                            <span class="emotion-tag" data-emotion="心胸狭隘">心胸狭隘</span>
+                            <span class="emotion-tag" data-emotion="从来都对">从来都对</span>
+                            <span class="emotion-tag" data-emotion="武断">武断</span>
+                            <span class="emotion-tag" data-emotion="专横">专横</span>
+                            <span class="emotion-tag" data-emotion="优越感">优越感</span>
+                            <span class="emotion-tag" data-emotion="有偏见">有偏见</span>
+                            <span class="emotion-tag" data-emotion="放肆">放肆</span>
+                            <span class="emotion-tag" data-emotion="自以为公正">自以为公正</span>
+                            <span class="emotion-tag" data-emotion="死板">死板</span>
+                            <span class="emotion-tag" data-emotion="刚直不屈">刚直不屈</span>
+                            <span class="emotion-tag" data-emotion="自恋">自恋</span>
+                            <span class="emotion-tag" data-emotion="自命不凡">自命不凡</span>
+                            <span class="emotion-tag" data-emotion="势利眼">势利眼</span>
+                            <span class="emotion-tag" data-emotion="顽固不化">顽固不化</span>
+                            <span class="emotion-tag" data-emotion="高傲">高傲</span>
+                            <span class="emotion-tag" data-emotion="记仇">记仇</span>
+                        </div>
+                        <div class="keyword-hint">💡 关键词：优越感、固执己见</div>
+                    </div>
+
+                    <div class="emotion-category wuwei">
+                        <h3>💪 无畏</h3>
+                        <div class="emotion-list">
+                            <span class="emotion-tag" data-emotion="爱冒险">爱冒险</span>
+                            <span class="emotion-tag" data-emotion="警觉">警觉</span>
+                            <span class="emotion-tag" data-emotion="活泼">活泼</span>
+                            <span class="emotion-tag" data-emotion="胸有成竹">胸有成竹</span>
+                            <span class="emotion-tag" data-emotion="清醒明了">清醒明了</span>
+                            <span class="emotion-tag" data-emotion="目标坚定">目标坚定</span>
+                            <span class="emotion-tag" data-emotion="有把握">有把握</span>
+                            <span class="emotion-tag" data-emotion="快乐">快乐</span>
+                            <span class="emotion-tag" data-emotion="思路清晰">思路清晰</span>
+                            <span class="emotion-tag" data-emotion="慈悲">慈悲</span>
+                            <span class="emotion-tag" data-emotion="能干">能干</span>
+                            <span class="emotion-tag" data-emotion="自信">自信</span>
+                            <span class="emotion-tag" data-emotion="有创造力">有创造力</span>
+                            <span class="emotion-tag" data-emotion="勇敢">勇敢</span>
+                            <span class="emotion-tag" data-emotion="果断">果断</span>
+                            <span class="emotion-tag" data-emotion="充满活力">充满活力</span>
+                            <span class="emotion-tag" data-emotion="热切">热切</span>
+                            <span class="emotion-tag" data-emotion="热情">热情</span>
+                            <span class="emotion-tag" data-emotion="兴奋">兴奋</span>
+                            <span class="emotion-tag" data-emotion="专注">专注</span>
+                            <span class="emotion-tag" data-emotion="慷慨">慷慨</span>
+                            <span class="emotion-tag" data-emotion="开心">开心</span>
+                            <span class="emotion-tag" data-emotion="幽默">幽默</span>
+                            <span class="emotion-tag" data-emotion="我能行">我能行</span>
+                            <span class="emotion-tag" data-emotion="独立">独立</span>
+                            <span class="emotion-tag" data-emotion="主动">主动</span>
+                            <span class="emotion-tag" data-emotion="正直">正直</span>
+                            <span class="emotion-tag" data-emotion="有爱">有爱</span>
+                            <span class="emotion-tag" data-emotion="上进">上进</span>
+                            <span class="emotion-tag" data-emotion="乐观">乐观</span>
+                            <span class="emotion-tag" data-emotion="积极">积极</span>
+                            <span class="emotion-tag" data-emotion="善于接受">善于接受</span>
+                            <span class="emotion-tag" data-emotion="足智多谋">足智多谋</span>
+                            <span class="emotion-tag" data-emotion="坚强">坚强</span>
+                            <span class="emotion-tag" data-emotion="助人为乐">助人为乐</span>
+                            <span class="emotion-tag" data-emotion="精力充沛">精力充沛</span>
+                            <span class="emotion-tag" data-emotion="热忱">热忱</span>
+                        </div>
+                        <div class="keyword-hint">💡 关键词：我能行、来者不拒</div>
+                    </div>
+
+                    <div class="emotion-category jieda">
+                        <h3>🤗 接纳</h3>
+                        <div class="emotion-list">
+                            <span class="emotion-tag" data-emotion="丰盛">丰盛</span>
+                            <span class="emotion-tag" data-emotion="感激">感激</span>
+                            <span class="emotion-tag" data-emotion="平衡">平衡</span>
+                            <span class="emotion-tag" data-emotion="美丽">美丽</span>
+                            <span class="emotion-tag" data-emotion="有归属感">有归属感</span>
+                            <span class="emotion-tag" data-emotion="天真烂漫">天真烂漫</span>
+                            <span class="emotion-tag" data-emotion="慈悲">慈悲</span>
+                            <span class="emotion-tag" data-emotion="体贴">体贴</span>
+                            <span class="emotion-tag" data-emotion="高兴">高兴</span>
+                            <span class="emotion-tag" data-emotion="兴高采烈">兴高采烈</span>
+                            <span class="emotion-tag" data-emotion="欣然接受">欣然接受</span>
+                            <span class="emotion-tag" data-emotion="有同理心">有同理心</span>
+                            <span class="emotion-tag" data-emotion="充实">充实</span>
+                            <span class="emotion-tag" data-emotion="一切都很好">一切都很好</span>
+                            <span class="emotion-tag" data-emotion="友好">友好</span>
+                            <span class="emotion-tag" data-emotion="圆满">圆满</span>
+                            <span class="emotion-tag" data-emotion="温和">温和</span>
+                            <span class="emotion-tag" data-emotion="热情洋溢">热情洋溢</span>
+                            <span class="emotion-tag" data-emotion="亲切">亲切</span>
+                            <span class="emotion-tag" data-emotion="和睦">和睦</span>
+                            <span class="emotion-tag" data-emotion="和谐">和谐</span>
+                            <span class="emotion-tag" data-emotion="合拍">合拍</span>
+                            <span class="emotion-tag" data-emotion="欢喜">欢喜</span>
+                            <span class="emotion-tag" data-emotion="有爱">有爱</span>
+                            <span class="emotion-tag" data-emotion="大度">大度</span>
+                            <span class="emotion-tag" data-emotion="成熟">成熟</span>
+                            <span class="emotion-tag" data-emotion="自然真挚">自然真挚</span>
+                            <span class="emotion-tag" data-emotion="没什么需要改变">没什么需要改变</span>
+                            <span class="emotion-tag" data-emotion="轻松">轻松</span>
+                            <span class="emotion-tag" data-emotion="无忧无虑">无忧无虑</span>
+                            <span class="emotion-tag" data-emotion="容光焕发">容光焕发</span>
+                            <span class="emotion-tag" data-emotion="乐于接受">乐于接受</span>
+                            <span class="emotion-tag" data-emotion="有安全感">有安全感</span>
+                            <span class="emotion-tag" data-emotion="温柔">温柔</span>
+                            <span class="emotion-tag" data-emotion="慈爱">慈爱</span>
+                            <span class="emotion-tag" data-emotion="有理解力">有理解力</span>
+                            <span class="emotion-tag" data-emotion="温暖">温暖</span>
+                            <span class="emotion-tag" data-emotion="幸福">幸福</span>
+                            <span class="emotion-tag" data-emotion="奇妙">奇妙</span>
+                        </div>
+                        <div class="keyword-hint">💡 关键词：一切都很好、没什么需要改变</div>
+                    </div>
+
+                    <div class="emotion-category pinghe">
+                        <h3>😌 平和</h3>
+                        <div class="emotion-list">
+                            <span class="emotion-tag" data-emotion="永不衰老">永不衰老</span>
+                            <span class="emotion-tag" data-emotion="有觉悟">有觉悟</span>
+                            <span class="emotion-tag" data-emotion="存在">存在</span>
+                            <span class="emotion-tag" data-emotion="无边无际">无边无际</span>
+                            <span class="emotion-tag" data-emotion="镇静">镇静</span>
+                            <span class="emotion-tag" data-emotion="完整">完整</span>
+                            <span class="emotion-tag" data-emotion="不朽">不朽</span>
+                            <span class="emotion-tag" data-emotion="自由">自由</span>
+                            <span class="emotion-tag" data-emotion="满足">满足</span>
+                            <span class="emotion-tag" data-emotion="热情">热情</span>
+                            <span class="emotion-tag" data-emotion="轻快">轻快</span>
+                            <span class="emotion-tag" data-emotion="合一">合一</span>
+                            <span class="emotion-tag" data-emotion="完美">完美</span>
+                            <span class="emotion-tag" data-emotion="纯粹">纯粹</span>
+                            <span class="emotion-tag" data-emotion="安静">安静</span>
+                            <span class="emotion-tag" data-emotion="宁静">宁静</span>
+                            <span class="emotion-tag" data-emotion="无限空间">无限空间</span>
+                            <span class="emotion-tag" data-emotion="静止">静止</span>
+                            <span class="emotion-tag" data-emotion="永恒">永恒</span>
+                            <span class="emotion-tag" data-emotion="安宁">安宁</span>
+                            <span class="emotion-tag" data-emotion="无限">无限</span>
+                            <span class="emotion-tag" data-emotion="一体">一体</span>
+                        </div>
+                        <div class="keyword-hint">💡 关键词：自由、无限</div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="switchTab('practice'); goToStep(1)">开始释放练习 →</button>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab-records">
+                <h2 class="section-title">📊 释放记录</h2>
+
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalCount">0</div>
+                        <div class="stat-label">总释放次数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="todayCount">0</div>
+                        <div class="stat-label">今日释放</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="avgIntensity">0%</div>
+                        <div class="stat-label">平均强度</div>
+                    </div>
+                </div>
+
+                <div class="record-form">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">✏️ 记录本次释放</h3>
+                    <div class="form-group">
+                        <label>释放的情绪：</label>
+                        <div id="recordEmotions" style="color: #666; font-style: italic;">暂无选择</div>
+                    </div>
+                    <div class="form-group">
+                        <label>情绪强度 (1-10)：</label>
+                        <div class="intensity-slider">
+                            <input type="range" id="intensitySlider" min="1" max="10" value="5" oninput="updateIntensityValue()">
+                            <span class="intensity-value" id="intensityValue">5</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>备注（可选）：</label>
+                        <textarea id="recordNote" placeholder="写下你释放后的感受..."></textarea>
+                    </div>
+                    <button class="btn btn-success" onclick="saveRecord()">保存记录</button>
+                </div>
+
+                <h3 style="color: #333; margin-bottom: 15px;">📜 历史记录</h3>
+                <div class="history-list" id="historyList">
+                    <div class="history-empty">
+                        <div class="history-empty-icon">📝</div>
+                        <p>暂无释放记录</p>
+                        <p style="font-size: 0.9em;">完成释放练习后，可以在这里保存和查看你的记录</p>
+                    </div>
+                </div>
+
+                <div class="clear-history">
+                    <button class="btn btn-secondary" onclick="exportRecords()">导出记录</button>
+                    <button class="btn btn-secondary" onclick="clearAllRecords()" style="color: #f44336;">清空记录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let breatheInterval = null;
+        let breathePhase = 0;
+        let selectedEmotions = [];
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelector(`.nav-tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            if (tabName === 'practice') {
+                updateCurrentEmotions();
+            }
+        }
+
+        function updateStepIndicator() {
+            const dots = document.querySelectorAll('.step-dot');
+            dots.forEach((dot, index) => {
+                const stepNum = index + 1;
+                dot.classList.remove('active', 'completed');
+                if (stepNum === currentStep) {
+                    dot.classList.add('active');
+                } else if (stepNum < currentStep) {
+                    dot.classList.add('completed');
+                }
+            });
+            const progress = ((currentStep - 1) / 4) * 100;
+            document.querySelector('.progress-fill').style.width = progress + '%';
+        }
+
+        function goToStep(step) {
+            document.querySelector('.step.active').classList.remove('active');
+            document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+            currentStep = step;
+            updateStepIndicator();
+            if (step === 4) {
+                startBreatheExercise();
+            }
+        }
+
+        function startBreatheExercise() {
+            const circle = document.getElementById('breatheCircle');
+            const text = document.getElementById('breatheText');
+            breathePhase = 0;
+            text.textContent = '吸气...';
+            circle.classList.add('inhale');
+            circle.classList.remove('hold', 'exhale');
+            breatheInterval = setInterval(() => {
+                breathePhase++;
+                if (breathePhase === 1) {
+                    text.textContent = '屏住...';
+                    circle.classList.remove('inhale');
+                    circle.classList.add('hold');
+                } else if (breathePhase === 2) {
+                    text.textContent = '呼气...';
+                    circle.classList.remove('hold');
+                    circle.classList.add('exhale');
+                } else if (breathePhase === 3) {
+                    text.textContent = '吸气...';
+                    circle.classList.remove('exhale');
+                    circle.classList.add('inhale');
+                    breathePhase = 0;
+                }
+            }, 4000);
+        }
+
+        function stopBreathe() {
+            if (breatheInterval) {
+                clearInterval(breatheInterval);
+                breatheInterval = null;
+            }
+            const circle = document.getElementById('breatheCircle');
+            circle.classList.remove('inhale', 'hold', 'exhale');
+        }
+
+        function resetPractice() {
+            stopBreathe();
+            currentStep = 1;
+            document.querySelector('.step.active').classList.remove('active');
+            document.querySelector('.step[data-step="1"]').classList.add('active');
+            updateStepIndicator();
+        }
+
+        document.querySelectorAll('.emotion-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                const emotion = this.getAttribute('data-emotion');
+                if (this.classList.contains('selected')) {
+                    this.classList.remove('selected');
+                    selectedEmotions = selectedEmotions.filter(e => e !== emotion);
+                } else {
+                    this.classList.add('selected');
+                    selectedEmotions.push(emotion);
+                }
+                updateSelectedTags();
+            });
+        });
+
+        function updateSelectedTags() {
+            const container = document.getElementById('selectedTags');
+            if (selectedEmotions.length === 0) {
+                container.innerHTML = '<span class="placeholder-text">点击下方情绪标签进行选择</span>';
+            } else {
+                container.innerHTML = selectedEmotions.map(emotion => 
+                    `<span class="selected-tag">
+                        ${emotion}
+                        <span class="remove" onclick="removeEmotion('${emotion}')">&times;</span>
+                    </span>`
+                ).join('');
+            }
+            document.getElementById('recordEmotions').textContent = 
+                selectedEmotions.length > 0 ? selectedEmotions.join('、') : '暂无选择';
+        }
+
+        function updateCurrentEmotions() {
+            const container = document.getElementById('currentEmotions');
+            if (selectedEmotions.length === 0) {
+                container.innerHTML = '<span class="placeholder-text">请在"情绪表"标签页选择你想要释放的情绪</span>';
+            } else {
+                container.innerHTML = selectedEmotions.map(emotion => 
+                    `<span class="selected-tag">${emotion}</span>`
+                ).join('');
+            }
+        }
+
+        function removeEmotion(emotion) {
+            selectedEmotions = selectedEmotions.filter(e => e !== emotion);
+            const tag = document.querySelector(`.emotion-tag[data-emotion="${emotion}"]`);
+            if (tag) tag.classList.remove('selected');
+            updateSelectedTags();
+        }
+
+        function updateIntensityValue() {
+            document.getElementById('intensityValue').textContent = document.getElementById('intensitySlider').value;
+        }
+
+        function saveRecord() {
+            if (selectedEmotions.length === 0) {
+                alert('请先选择要释放的情绪！');
+                return;
+            }
+            const records = JSON.parse(localStorage.getItem('sedonaRecords') || '[]');
+            const record = {
+                id: Date.now(),
+                date: new Date().toLocaleString('zh-CN'),
+                emotions: [...selectedEmotions],
+                intensity: parseInt(document.getElementById('intensitySlider').value),
+                note: document.getElementById('recordNote').value
+            };
+            records.unshift(record);
+            localStorage.setItem('sedonaRecords', JSON.stringify(records));
+            document.getElementById('recordNote').value = '';
+            document.getElementById('intensitySlider').value = 5;
+            document.getElementById('intensityValue').textContent = '5';
+            loadRecords();
+            alert('记录已保存！');
+        }
+
+        function loadRecords() {
+            const records = JSON.parse(localStorage.getItem('sedonaRecords') || '[]');
+            document.getElementById('totalCount').textContent = records.length;
+            const today = new Date().toDateString();
+            const todayCount = records.filter(r => new Date(r.date).toDateString() === today).length;
+            document.getElementById('todayCount').textContent = todayCount;
+            if (records.length > 0) {
+                const avgIntensity = Math.round(records.reduce((sum, r) => sum + r.intensity, 0) / records.length * 10);
+                document.getElementById('avgIntensity').textContent = avgIntensity + '%';
+            } else {
+                document.getElementById('avgIntensity').textContent = '0%';
+            }
+            const historyList = document.getElementById('historyList');
+            if (records.length === 0) {
+                historyList.innerHTML = `
+                    <div class="history-empty">
+                        <div class="history-empty-icon">📝</div>
+                        <p>暂无释放记录</p>
+                        <p style="font-size: 0.9em;">完成释放练习后，可以在这里保存和查看你的记录</p>
+                    </div>`;
+                return;
+            }
+            historyList.innerHTML = records.map(record => `
+                <div class="history-item">
+                    <div class="history-header">
+                        <span class="history-date">${record.date}</span>
+                        <span class="history-delete" onclick="deleteRecord(${record.id})">删除</span>
+                    </div>
+                    <div class="history-emotions">
+                        ${record.emotions.map(e => `<span class="history-emotion-tag">${e}</span>`).join('')}
+                    </div>
+                    <div class="history-intensity">
+                        <span style="font-size: 0.85em; color: #666;">强度：</span>
+                        <div class="history-intensity-bar">
+                            <div class="history-intensity-fill" style="width: ${record.intensity * 10}%"></div>
+                        </div>
+                        <span style="font-size: 0.85em; color: #667eea; font-weight: 600;">${record.intensity}/10</span>
+                    </div>
+                    ${record.note ? `<div class="history-note">"${record.note}"</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function deleteRecord(id) {
+            if (confirm('确定要删除这条记录吗？')) {
+                let records = JSON.parse(localStorage.getItem('sedonaRecords') || '[]');
+                records = records.filter(r => r.id !== id);
+                localStorage.setItem('sedonaRecords', JSON.stringify(records));
+                loadRecords();
+            }
+        }
+
+        function clearAllRecords() {
+            if (confirm('确定要清空所有记录吗？此操作不可恢复！')) {
+                localStorage.removeItem('sedonaRecords');
+                loadRecords();
+            }
+        }
+
+        function exportRecords() {
+            const records = JSON.parse(localStorage.getItem('sedonaRecords') || '[]');
+            if (records.length === 0) {
+                alert('暂无记录可导出');
+                return;
+            }
+            let csv = '日期,情绪,强度,备注\n';
+            records.forEach(r => {
+                csv += `"${r.date}","${r.emotions.join('、')}","${r.intensity}/10","${r.note}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `sedona_records_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.csv`;
+            link.click();
+        }
+
+        updateStepIndicator();
+        loadRecords();
+        updateCurrentEmotions();
+    </script>
+</body>
+</html>

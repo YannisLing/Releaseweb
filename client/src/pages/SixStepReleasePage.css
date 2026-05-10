@@ -1,0 +1,370 @@
+.six-step-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.page-header h1 {
+  font-size: 2em;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: 1em;
+}
+
+.start-section {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.feeling-input-box {
+  margin-bottom: 30px;
+}
+
+.feeling-input-box label {
+  display: block;
+  font-size: 1.1em;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+}
+
+.feeling-input {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1em;
+  transition: border-color 0.2s ease;
+}
+
+.feeling-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.start-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(245, 87, 108, 0.4);
+}
+
+.steps-intro {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid #eee;
+}
+
+.steps-intro h3 {
+  font-size: 1.3em;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.step-intro-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.step-number-badge {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9em;
+  flex-shrink: 0;
+}
+
+.step-intro-text {
+  color: var(--text-primary);
+  font-size: 0.95em;
+}
+
+.release-section {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.release-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.release-feeling-name {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.close-release-btn {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  color: #999;
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.close-release-btn:hover {
+  color: var(--text-primary);
+}
+
+.release-progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.release-progress-dots .progress-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.release-progress-dots .progress-dot.active {
+  background: #f5576c;
+  opacity: 0.5;
+}
+
+.release-progress-dots .progress-dot.current {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  transform: scale(1.3);
+  opacity: 1;
+}
+
+.release-step-content {
+  text-align: center;
+}
+
+.step-display {
+  margin-bottom: 40px;
+}
+
+.step-number {
+  display: inline-block;
+  background: rgba(245, 87, 108, 0.1);
+  color: #f5576c;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.step-question {
+  font-size: 1.8em;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.step-instruction {
+  font-size: 1em;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.three-wants-section {
+  margin-top: 30px;
+  padding: 25px;
+  background: linear-gradient(135deg, rgba(245, 87, 108, 0.05) 0%, rgba(240, 147, 251, 0.05) 100%);
+  border-radius: 12px;
+  border: 2px solid rgba(245, 87, 108, 0.2);
+}
+
+.wants-intro {
+  font-size: 1em;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.wants-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.want-btn {
+  padding: 12px 24px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+}
+
+.want-btn:hover {
+  border-color: #f5576c;
+  background: rgba(245, 87, 108, 0.05);
+}
+
+.want-btn.selected {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border-color: transparent;
+}
+
+.step-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-secondary {
+  padding: 12px 30px;
+  background: #f0f0f0;
+  color: var(--text-secondary);
+  border: none;
+  border-radius: 10px;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+}
+
+.btn-success {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #f5576c;
+  font-size: 0.95em;
+  cursor: pointer;
+  margin-top: 20px;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.btn-link:hover {
+  color: #f093fb;
+}
+
+@media (max-width: 768px) {
+  .six-step-page {
+    padding: 20px 15px;
+  }
+
+  .start-section,
+  .release-section {
+    padding: 25px 20px;
+  }
+
+  .page-header h1 {
+    font-size: 1.6em;
+  }
+
+  .step-question {
+    font-size: 1.4em;
+  }
+
+  .step-actions {
+    flex-direction: column;
+  }
+
+  .step-actions button {
+    width: 100%;
+  }
+
+  .wants-buttons {
+    flex-direction: column;
+  }
+
+  .want-btn {
+    width: 100%;
+  }
+}

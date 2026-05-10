@@ -1,0 +1,133 @@
+.emotions-page {
+  padding: 30px 20px;
+}
+
+.page-title {
+  font-size: 1.5em;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.page-subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 25px;
+  font-size: 0.95em;
+  line-height: 1.6;
+}
+
+.page-subtitle small {
+  color: #999;
+}
+
+.emotion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.emotion-category {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-top: 4px solid;
+}
+
+.emotion-category:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.emotion-category h3 {
+  font-size: 1.1em;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid;
+}
+
+.emotion-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.emotion-tag {
+  padding: 5px 10px;
+  background: var(--bg-light);
+  border-radius: 20px;
+  font-size: 0.85em;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.emotion-tag:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.emotion-tag.selected {
+  background: var(--primary-gradient);
+  color: white;
+}
+
+.keyword-hint {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-top: 15px;
+  font-size: 0.85em;
+  color: #2e7d32;
+}
+
+.selected-tag .remove {
+  cursor: pointer;
+  font-size: 1.2em;
+  opacity: 0.8;
+  margin-left: 5px;
+}
+
+.selected-tag .remove:hover {
+  opacity: 1;
+}
+
+.selected-tag.release-ready {
+  background: var(--primary-gradient);
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.selected-tag.release-ready:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+@media (max-width: 768px) {
+  .emotion-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 15px;
+  }
+  
+  .emotions-page {
+    padding: 20px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .emotion-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-title {
+    font-size: 1.3em;
+  }
+  
+  .page-subtitle {
+    font-size: 0.9em;
+  }
+}

@@ -1,0 +1,360 @@
+.practice-container {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.sidebar {
+  width: 300px;
+  background: white;
+  padding: 2rem;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.user-info-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.user-info-section h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.user-info-section .logout-button {
+  width: 100%;
+  padding: 0.8rem;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.user-info-section .logout-button:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.sidebar h2 {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.level-list {
+  margin-bottom: 2rem;
+}
+
+.level-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.8rem;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.level-item.active {
+  background: #3498db;
+  color: white;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+}
+
+.level-item.completed {
+  background: #27ae60;
+  color: white;
+}
+
+.level-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-right: 1rem;
+  width: 30px;
+  text-align: center;
+}
+
+.level-info {
+  flex: 1;
+}
+
+.level-info h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.level-info p {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.checkmark {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.back-button {
+  display: block;
+  text-align: center;
+  padding: 0.8rem;
+  background: #95a5a6;
+  color: white;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  margin-top: 2rem;
+}
+
+.back-button:hover {
+  background: #7f8c8d;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.level-header {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.level-header h1 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 2.5rem;
+}
+
+.level-header p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+.practice-workbook {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.workbook-section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.workbook-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.workbook-section h2 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.event-input {
+  width: 100%;
+  min-height: 120px;
+  padding: 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.8rem;
+  font-size: 1rem;
+  resize: vertical;
+  font-family: inherit;
+  margin-bottom: 1.5rem;
+}
+
+.event-suggestions h3 {
+  color: #34495e;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.suggestion-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.suggestion-button {
+  padding: 0.5rem 1rem;
+  background: #ecf0f1;
+  border: 1px solid #bdc3c7;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.suggestion-button:hover {
+  background: #d5dbdb;
+  transform: translateY(-2px);
+}
+
+.feelings-input {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.feeling-input {
+  flex: 1;
+  padding: 0.8rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.add-feeling-button {
+  padding: 0 1.5rem;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-feeling-button:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+}
+
+.feelings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.feeling-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.feeling-item:hover {
+  background: #e9ecef;
+}
+
+.release-button {
+  padding: 0.5rem 1rem;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.release-button:hover {
+  background: #c0392b;
+  transform: translateY(-1px);
+}
+
+.released-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.released-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 0.5rem;
+  color: #155724;
+}
+
+.released-checkmark {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.completion-section {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.complete-level-button {
+  padding: 1rem 2rem;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+.complete-level-button:hover:not(:disabled) {
+  background: #219a52;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+}
+
+.complete-level-button:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .practice-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+
+  .level-header,
+  .practice-workbook {
+    padding: 1.5rem;
+  }
+
+  .feelings-input {
+    flex-direction: column;
+  }
+
+  .add-feeling-button {
+    padding: 0.8rem;
+  }
+}

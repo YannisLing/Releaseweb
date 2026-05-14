@@ -3,15 +3,18 @@ import { getDatabase } from '../database.js';
 
 const router = express.Router();
 
-// 获取事件的所有感受
 router.get('/event/:eventId', (req, res) => {
   try {
     const { eventId } = req.params;
+    const userId = req.userId;
     const db = getDatabase();
     
     db.all(
-      'SELECT * FROM feelings WHERE event_id = ? ORDER BY created_at',
-      [eventId],
+      `SELECT f.* FROM feelings f 
+       JOIN events e ON f.event_id = e.id 
+       WHERE e.user_id = ? AND f.event_id = ? 
+       ORDER BY f.created_at`,
+      [userId, eventId],
       (err, feelings) => {
         if (err) {
           console.error('Error fetching feelings:', err);
@@ -26,49 +29,75 @@ router.get('/event/:eventId', (req, res) => {
   }
 });
 
-// 创建感受
 router.post('/', (req, res) => {
   try {
     const { eventId, name } = req.body;
+    const userId = req.userId;
     const db = getDatabase();
 
     if (!eventId || !name) {
       return res.status(400).json({ error: 'Event ID and feeling name are required' });
     }
 
-    db.run(
-      'INSERT INTO feelings (event_id, name) VALUES (?, ?)',
-      [eventId, name],
-      function(err) {
-        if (err) {
-          console.error('Error creating feeling:', err);
-          return res.status(500).json({ error: 'Failed to create feeling' });
-        }
-        res.json({ id: this.lastID, eventId, name, released: false, feelingGood: false });
+    db.get('SELECT * FROM events WHERE id = ? AND user_id = ?', [eventId, userId], (err, event) => {
+      if (err) {
+        console.error('Error checking event:', err);
+        return res.status(500).json({ error: 'Failed to create feeling' });
       }
-    );
+      if (!event) {
+        return res.status(403).json({ error: 'Unauthorized: Event does not belong to user' });
+      }
+
+      db.run(
+        'INSERT INTO feelings (event_id, name) VALUES (?, ?)',
+        [eventId, name],
+        function(err) {
+          if (err) {
+            console.error('Error creating feeling:', err);
+            return res.status(500).json({ error: 'Failed to create feeling' });
+          }
+          res.json({ id: this.lastID, eventId, name, released: false, feelingGood: false });
+        }
+      );
+    });
   } catch (error) {
     console.error('Error creating feeling:', error);
     res.status(500).json({ error: 'Failed to create feeling' });
   }
 });
 
-// 更新感受状态
 router.put('/:id', (req, res) => {
   try {
     const { id } = req.params;
     const { released, feelingGood } = req.body;
+    const userId = req.userId;
     const db = getDatabase();
 
-    db.run(
-      'UPDATE feelings SET released = ?, feeling_good = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-      [released ? 1 : 0, feelingGood ? 1 : 0, id],
-      function(err) {
+    db.get(
+      `SELECT * FROM feelings f 
+       JOIN events e ON f.event_id = e.id 
+       WHERE f.id = ? AND e.user_id = ?`,
+      [id, userId],
+      (err, feeling) => {
         if (err) {
-          console.error('Error updating feeling:', err);
+          console.error('Error checking feeling:', err);
           return res.status(500).json({ error: 'Failed to update feeling' });
         }
-        res.json({ success: true, feelingId: id });
+        if (!feeling) {
+          return res.status(403).json({ error: 'Unauthorized: Feeling does not belong to user' });
+        }
+
+        db.run(
+          'UPDATE feelings SET released = ?, feeling_good = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+          [released ? 1 : 0, feelingGood ? 1 : 0, id],
+          function(err) {
+            if (err) {
+              console.error('Error updating feeling:', err);
+              return res.status(500).json({ error: 'Failed to update feeling' });
+            }
+            res.json({ success: true, feelingId: id });
+          }
+        );
       }
     );
   } catch (error) {
@@ -77,19 +106,35 @@ router.put('/:id', (req, res) => {
   }
 });
 
-// 删除感受
 router.delete('/:id', (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.userId;
     const db = getDatabase();
 
-    db.run('DELETE FROM feelings WHERE id = ?', [id], function(err) {
-      if (err) {
-        console.error('Error deleting feeling:', err);
-        return res.status(500).json({ error: 'Failed to delete feeling' });
+    db.get(
+      `SELECT * FROM feelings f 
+       JOIN events e ON f.event_id = e.id 
+       WHERE f.id = ? AND e.user_id = ?`,
+      [id, userId],
+      (err, feeling) => {
+        if (err) {
+          console.error('Error checking feeling:', err);
+          return res.status(500).json({ error: 'Failed to delete feeling' });
+        }
+        if (!feeling) {
+          return res.status(403).json({ error: 'Unauthorized: Feeling does not belong to user' });
+        }
+
+        db.run('DELETE FROM feelings WHERE id = ?', [id], function(err) {
+          if (err) {
+            console.error('Error deleting feeling:', err);
+            return res.status(500).json({ error: 'Failed to delete feeling' });
+          }
+          res.json({ success: true });
+        });
       }
-      res.json({ success: true });
-    });
+    );
   } catch (error) {
     console.error('Error deleting feeling:', error);
     res.status(500).json({ error: 'Failed to delete feeling' });

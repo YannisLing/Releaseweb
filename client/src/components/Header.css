@@ -1,8 +1,13 @@
 .header {
   background: var(--primary-gradient);
   color: white;
-  padding: 30px 20px;
-  text-align: center;
+  padding: 20px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header h1 {
@@ -14,6 +19,56 @@
 .header p {
   font-size: clamp(0.85em, 2.5vw, 1em);
   opacity: 0.9;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  font-size: 0.9em;
+  opacity: 0.9;
+}
+
+.donate-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.donate-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8em;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .nav-tabs {
@@ -46,12 +101,36 @@
   border-bottom: 3px solid var(--primary-color);
 }
 
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .user-info {
+    align-items: center;
+  }
+  
+  .user-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
 @media (max-width: 480px) {
   .header {
-    padding: 20px 15px;
+    padding: 15px;
   }
   
   .nav-tab {
     padding: 12px 5px;
+  }
+  
+  .user-name {
+    font-size: 0.8em;
+  }
+  
+  .donate-btn {
+    font-size: 1.1em;
   }
 }

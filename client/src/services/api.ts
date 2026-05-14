@@ -1,4 +1,17 @@
-const API_BASE_URL = 'http://localhost:4000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
+const getToken = () => localStorage.getItem('token');
+
+const createHeaders = () => {
+  const token = getToken();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+};
 
 interface EventData {
   practiceId: string;
@@ -36,7 +49,9 @@ interface RecordData {
 
 export const api = {
   async getPracticeProgress(practiceId: string) {
-    const response = await fetch(`${API_BASE_URL}/practice-progress/${practiceId}`);
+    const response = await fetch(`${API_BASE_URL}/practice-progress/${practiceId}`, {
+      headers: createHeaders(),
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch practice progress');
     }
@@ -46,9 +61,7 @@ export const api = {
   async updatePracticeProgress(practiceId: string, data: PracticeProgressData) {
     const response = await fetch(`${API_BASE_URL}/practice-progress/${practiceId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: createHeaders(),
       body: JSON.stringify(data),
     });
     if (!response.ok) {
@@ -58,7 +71,9 @@ export const api = {
   },
 
   async getEvents(practiceId: string) {
-    const response = await fetch(`${API_BASE_URL}/events/practice/${practiceId}`);
+    const response = await fetch(`${API_BASE_URL}/events/practice/${practiceId}`, {
+      headers: createHeaders(),
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch events');
     }
@@ -68,9 +83,7 @@ export const api = {
   async createEvent(data: EventData) {
     const response = await fetch(`${API_BASE_URL}/events`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: createHeaders(),
       body: JSON.stringify(data),
     });
     if (!response.ok) {
@@ -82,9 +95,7 @@ export const api = {
   async updateEvent(eventId: string, data: UpdateEventData) {
     const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: createHeaders(),
       body: JSON.stringify(data),
     });
     if (!response.ok) {
@@ -96,6 +107,7 @@ export const api = {
   async deleteEvent(eventId: string) {
     const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
       method: 'DELETE',
+      headers: createHeaders(),
     });
     if (!response.ok) {
       throw new Error('Failed to delete event');
@@ -104,7 +116,9 @@ export const api = {
   },
 
   async getFeelings(eventId: string) {
-    const response = await fetch(`${API_BASE_URL}/feelings/event/${eventId}`);
+    const response = await fetch(`${API_BASE_URL}/feelings/event/${eventId}`, {
+      headers: createHeaders(),
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch feelings');
     }
@@ -114,9 +128,7 @@ export const api = {
   async createFeeling(data: FeelingData) {
     const response = await fetch(`${API_BASE_URL}/feelings`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: createHeaders(),
       body: JSON.stringify(data),
     });
     if (!response.ok) {
@@ -128,9 +140,7 @@ export const api = {
   async updateFeeling(feelingId: string, data: UpdateFeelingData) {
     const response = await fetch(`${API_BASE_URL}/feelings/${feelingId}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: createHeaders(),
       body: JSON.stringify(data),
     });
     if (!response.ok) {
@@ -142,6 +152,7 @@ export const api = {
   async deleteFeeling(feelingId: string) {
     const response = await fetch(`${API_BASE_URL}/feelings/${feelingId}`, {
       method: 'DELETE',
+      headers: createHeaders(),
     });
     if (!response.ok) {
       throw new Error('Failed to delete feeling');
@@ -152,9 +163,7 @@ export const api = {
   async saveRecord(data: RecordData) {
     const response = await fetch(`${API_BASE_URL}/records`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: createHeaders(),
       body: JSON.stringify(data),
     });
     if (!response.ok) {
@@ -164,7 +173,9 @@ export const api = {
   },
 
   async getAllRecords() {
-    const response = await fetch(`${API_BASE_URL}/records`);
+    const response = await fetch(`${API_BASE_URL}/records`, {
+      headers: createHeaders(),
+    });
     if (!response.ok) {
       throw new Error('Failed to fetch records');
     }
@@ -174,6 +185,7 @@ export const api = {
   async deleteRecord(id: number) {
     const response = await fetch(`${API_BASE_URL}/records/${id}`, {
       method: 'DELETE',
+      headers: createHeaders(),
     });
     if (!response.ok) {
       throw new Error('Failed to delete record');
@@ -184,6 +196,7 @@ export const api = {
   async clearAllRecords() {
     const response = await fetch(`${API_BASE_URL}/records`, {
       method: 'DELETE',
+      headers: createHeaders(),
     });
     if (!response.ok) {
       throw new Error('Failed to clear records');

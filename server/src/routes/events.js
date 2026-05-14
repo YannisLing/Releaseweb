@@ -3,12 +3,12 @@ import { getDatabase } from '../database.js';
 
 const router = express.Router();
 
-// 获取所有事件
 router.get('/', (req, res) => {
   try {
     const db = getDatabase();
+    const userId = req.userId;
 
-    db.all('SELECT * FROM events ORDER BY created_at DESC', (err, events) => {
+    db.all('SELECT * FROM events WHERE user_id = ? ORDER BY created_at DESC', [userId], (err, events) => {
       if (err) {
         console.error('Error fetching events:', err);
         return res.status(500).json({ error: 'Failed to fetch events' });
@@ -21,15 +21,15 @@ router.get('/', (req, res) => {
   }
 });
 
-// 获取特定练习的事件
 router.get('/practice/:practiceId', (req, res) => {
   try {
     const { practiceId } = req.params;
+    const userId = req.userId;
     const db = getDatabase();
 
     db.all(
-      'SELECT * FROM events WHERE practice_id = ? ORDER BY created_at',
-      [practiceId],
+      'SELECT * FROM events WHERE user_id = ? AND practice_id = ? ORDER BY created_at',
+      [userId, practiceId],
       (err, events) => {
         if (err) {
           console.error('Error fetching events:', err);
@@ -44,10 +44,10 @@ router.get('/practice/:practiceId', (req, res) => {
   }
 });
 
-// 创建事件
 router.post('/', (req, res) => {
   try {
     const { practiceId, exerciseId, situation } = req.body;
+    const userId = req.userId;
     const db = getDatabase();
 
     if (!practiceId || !exerciseId) {
@@ -58,7 +58,7 @@ router.post('/', (req, res) => {
 
     db.run(
       'INSERT INTO events (user_id, practice_id, exercise_id, situation) VALUES (?, ?, ?, ?)',
-      [1, practiceId, exerciseId, situationText],
+      [userId, practiceId, exerciseId, situationText],
       function(err) {
         if (err) {
           console.error('Error creating event:', err);
@@ -73,19 +73,19 @@ router.post('/', (req, res) => {
   }
 });
 
-// 更新事件
 router.put('/:id', (req, res) => {
   try {
     const { id } = req.params;
     const { situation, completed } = req.body;
+    const userId = req.userId;
     const db = getDatabase();
 
     const situationText = situation !== undefined ? situation : '';
     const completedValue = completed !== undefined ? (completed ? 1 : 0) : 0;
 
     db.run(
-      'UPDATE events SET situation = ?, completed = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-      [situationText, completedValue, id],
+      'UPDATE events SET situation = ?, completed = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND user_id = ?',
+      [situationText, completedValue, id, userId],
       function(err) {
         if (err) {
           console.error('Error updating event:', err);
@@ -100,10 +100,10 @@ router.put('/:id', (req, res) => {
   }
 });
 
-// 删除事件
 router.delete('/:id', (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.userId;
     const db = getDatabase();
 
     db.run('DELETE FROM feelings WHERE event_id = ?', [id], (err) => {
@@ -112,7 +112,7 @@ router.delete('/:id', (req, res) => {
         return res.status(500).json({ error: 'Failed to delete event' });
       }
 
-      db.run('DELETE FROM events WHERE id = ?', [id], function(err) {
+      db.run('DELETE FROM events WHERE id = ? AND user_id = ?', [id, userId], function(err) {
         if (err) {
           console.error('Error deleting event:', err);
           return res.status(500).json({ error: 'Failed to delete event' });

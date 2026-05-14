@@ -1,8 +1,10 @@
 import { Link, useLocation } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import './Header.css'
 
 export default function Header() {
   const location = useLocation()
+  const { user, logout } = useAuth()
   
   const getTitle = () => {
     switch (location.pathname) {
@@ -10,6 +12,7 @@ export default function Header() {
       case '/six-step': return '✨ 释放法黄金六步骤'
       case '/emotions': return '📋 情绪表'
       case '/records': return '📊 释放记录'
+      case '/donate': return '❤️ 支持开发者'
       default: return '🕊️ 圣多娜释放法'
     }
   }
@@ -17,8 +20,29 @@ export default function Header() {
   return (
     <>
       <header className="header">
-        <h1>{getTitle()}</h1>
-        <p>通过四个简单的问题，释放你的情绪负担</p>
+        <div className="header-content">
+          <div>
+            <h1>{getTitle()}</h1>
+            <p>通过四个简单的问题，释放你的情绪负担</p>
+          </div>
+          {user && (
+            <div className="user-info">
+              <div className="user-actions">
+                <Link 
+                  to="/donate" 
+                  className="donate-btn"
+                  title="支持开发者"
+                >
+                  💝
+                </Link>
+                <span className="user-name">{user.name || user.email}</span>
+                <button className="logout-btn" onClick={logout} title="退出登录">
+                  退出
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </header>
       <nav className="nav-tabs">
         <Link 

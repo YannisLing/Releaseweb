@@ -3,12 +3,12 @@ import { getDatabase } from '../database.js';
 
 const router = express.Router();
 
-// 获取所有释放记录
 router.get('/', (req, res) => {
   try {
     const db = getDatabase();
+    const userId = req.userId;
     
-    db.all('SELECT * FROM release_records ORDER BY created_at DESC', (err, records) => {
+    db.all('SELECT * FROM release_records WHERE user_id = ? ORDER BY created_at DESC', [userId], (err, records) => {
       if (err) {
         console.error('Error fetching records:', err);
         return res.status(500).json({ error: 'Failed to fetch records' });
@@ -36,10 +36,10 @@ router.get('/', (req, res) => {
   }
 });
 
-// 保存释放记录
 router.post('/', (req, res) => {
   try {
     const { feelingName, intensity, note } = req.body;
+    const userId = req.userId;
     const db = getDatabase();
 
     if (!feelingName) {
@@ -48,7 +48,7 @@ router.post('/', (req, res) => {
 
     db.run(
       'INSERT INTO release_records (user_id, feeling_name, intensity, note) VALUES (?, ?, ?, ?)',
-      [1, feelingName, intensity || 5, note || ''],
+      [userId, feelingName, intensity || 5, note || ''],
       function(err) {
         if (err) {
           console.error('Error saving record:', err);
@@ -70,13 +70,13 @@ router.post('/', (req, res) => {
   }
 });
 
-// 删除释放记录
 router.delete('/:id', (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.userId;
     const db = getDatabase();
 
-    db.run('DELETE FROM release_records WHERE id = ?', [id], function(err) {
+    db.run('DELETE FROM release_records WHERE id = ? AND user_id = ?', [id, userId], function(err) {
       if (err) {
         console.error('Error deleting record:', err);
         return res.status(500).json({ error: 'Failed to delete record' });
@@ -89,12 +89,12 @@ router.delete('/:id', (req, res) => {
   }
 });
 
-// 清空所有释放记录
 router.delete('/', (req, res) => {
   try {
+    const userId = req.userId;
     const db = getDatabase();
 
-    db.run('DELETE FROM release_records WHERE user_id = 1', function(err) {
+    db.run('DELETE FROM release_records WHERE user_id = ?', [userId], function(err) {
       if (err) {
         console.error('Error clearing records:', err);
         return res.status(500).json({ error: 'Failed to clear records' });

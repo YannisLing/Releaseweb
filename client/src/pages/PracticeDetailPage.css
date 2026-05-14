@@ -432,6 +432,12 @@
   max-height: 80vh;
   overflow-y: auto;
   width: 100%;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.emotion-picker::-webkit-scrollbar {
+  display: none;
 }
 
 .emotion-picker h3 {

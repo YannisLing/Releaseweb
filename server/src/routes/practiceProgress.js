@@ -3,12 +3,12 @@ import { getDatabase } from '../database.js';
 
 const router = express.Router();
 
-// 获取所有练习进度
 router.get('/', (req, res) => {
   try {
     const db = getDatabase();
+    const userId = req.userId;
     
-    db.all('SELECT * FROM practice_progress ORDER BY practice_id', (err, progress) => {
+    db.all('SELECT * FROM practice_progress WHERE user_id = ? ORDER BY practice_id', [userId], (err, progress) => {
       if (err) {
         console.error('Error fetching practice progress:', err);
         return res.status(500).json({ error: 'Failed to fetch practice progress' });
@@ -21,15 +21,15 @@ router.get('/', (req, res) => {
   }
 });
 
-// 获取单个练习进度
 router.get('/:practiceId', (req, res) => {
   try {
     const { practiceId } = req.params;
+    const userId = req.userId;
     const db = getDatabase();
     
     db.get(
-      'SELECT * FROM practice_progress WHERE practice_id = ?',
-      [practiceId],
+      'SELECT * FROM practice_progress WHERE user_id = ? AND practice_id = ?',
+      [userId, practiceId],
       (err, progress) => {
         if (err) {
           console.error('Error fetching practice progress:', err);
@@ -44,18 +44,18 @@ router.get('/:practiceId', (req, res) => {
   }
 });
 
-// 更新练习进度
 router.put('/:practiceId', (req, res) => {
   try {
     const { practiceId } = req.params;
     const { attemptsMade, attemptsRequired, completed } = req.body;
+    const userId = req.userId;
     const db = getDatabase();
 
     db.run(
       `INSERT OR REPLACE INTO practice_progress 
        (user_id, practice_id, attempts_made, attempts_required, completed, updated_at) 
        VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-      [1, practiceId, attemptsMade, attemptsRequired, completed ? 1 : 0],
+      [userId, practiceId, attemptsMade, attemptsRequired, completed ? 1 : 0],
       function(err) {
         if (err) {
           console.error('Error updating practice progress:', err);
@@ -70,12 +70,12 @@ router.put('/:practiceId', (req, res) => {
   }
 });
 
-// 重置所有练习进度
 router.delete('/', (req, res) => {
   try {
+    const userId = req.userId;
     const db = getDatabase();
 
-    db.run('DELETE FROM practice_progress WHERE user_id = 1', function(err) {
+    db.run('DELETE FROM practice_progress WHERE user_id = ?', [userId], function(err) {
       if (err) {
         console.error('Error resetting practice progress:', err);
         return res.status(500).json({ error: 'Failed to reset practice progress' });

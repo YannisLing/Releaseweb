@@ -13,8 +13,16 @@ let db;
 
 const initDatabase = () => {
     try {
-        db = new Database(dbPath);
-        console.log('Connected to the SQLite database.');
+        db = new Database(dbPath, {
+            verbose: process.env.NODE_ENV === 'development' ? console.log : null,
+        });
+        
+        db.pragma('journal_mode = WAL');
+        db.pragma('cache_size = -64000');
+        db.pragma('synchronous = OFF');
+        db.pragma('foreign_keys = ON');
+        
+        console.log('Connected to the SQLite database with optimized settings.');
 
         const schema = fs.readFileSync(schemaPath, 'utf8');
         db.exec(schema);

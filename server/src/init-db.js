@@ -1,4 +1,4 @@
-import sqlite3 from 'sqlite3';
+import initSqlJs from 'sql.js';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -14,20 +14,27 @@ const schemaPath = path.join(__dirname, 'schema.sql');
 const schema = fs.readFileSync(schemaPath, 'utf8');
 
 // 创建数据库连接
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('Error opening database:', err.message);
-        process.exit(1);
-    }
-    console.log('Connected to the SQLite database.');
+const SQL = await initSqlJs();
 
-    // 执行schema
-    db.exec(schema, (err) => {
-        if (err) {
-            console.error('Error executing schema:', err.message);
-        } else {
-            console.log('Database schema initialized successfully.');
-        }
-        db.close();
-    });
-});
+let sqlJsDb;
+if (fs.existsSync(dbPath)) {
+    const fileBuffer = fs.readFileSync(dbPath);
+    sqlJsDb = new SQL.Database(fileBuffer);
+} else {
+    sqlJsDb = new SQL.Database();
+}
+
+console.log('Connected to the SQLite database.');
+
+// 执行schema
+try {
+    sqlJsDb.run(schema);
+    const data = sqlJsDb.export();
+    fs.writeFileSync(dbPath, Buffer.from(data));
+    console.log('Database schema initialized successfully.');
+} catch (err) {
+    console.error('Error executing schema:', err.message);
+    process.exit(1);
+}
+
+sqlJsDb.close();

@@ -99,12 +99,12 @@ export default function PracticeListPage() {
               <div className="practice-card-header">
                 <div className="practice-number">{index + 1}</div>
                 <div className="practice-status">
-                  {practice.completed ? (
-                    <span className="status-completed">✓ 已完成</span>
-                  ) : isAvailable ? (
-                    <span className="status-available">● 可开始</span>
-                  ) : (
-                    <span className="status-locked">🔒 未解锁</span>
+                  {practice.completed ? null : (
+                    isAvailable ? (
+                      <span className="status-available">● 可开始</span>
+                    ) : (
+                      <span className="status-locked">🔒 未解锁</span>
+                    )
                   )}
                 </div>
               </div>

@@ -139,8 +139,7 @@ export default function EmotionsPage() {
     <div className="content emotions-page">
       <h2 className="page-title">圣多娜情绪表（完整版）</h2>
       <p className="page-subtitle">
-        点击任意情绪进入释放流程<br />
-        <small>关键词可以帮助你快速定位情绪类别</small>
+        点击任意情绪进入释放流程
       </p>
 
       <div className="selected-emotions-box">
@@ -180,9 +179,6 @@ export default function EmotionsPage() {
                   {emotion}
                 </span>
               ))}
-            </div>
-            <div className="keyword-hint">
-              💡 关键词：{category.keywords}
             </div>
           </div>
         ))}

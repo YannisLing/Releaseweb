@@ -17,10 +17,6 @@
   line-height: 1.6;
 }
 
-.page-subtitle small {
-  color: #999;
-}
-
 .emotion-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -73,15 +69,6 @@
 .emotion-tag.selected {
   background: var(--primary-gradient);
   color: white;
-}
-
-.keyword-hint {
-  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-  border-radius: 8px;
-  padding: 10px 15px;
-  margin-top: 15px;
-  font-size: 0.85em;
-  color: #2e7d32;
 }
 
 .selected-tag .remove {

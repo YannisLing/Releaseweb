@@ -16,30 +16,28 @@ router.post('/register', async (req, res) => {
     const db = getDatabase();
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    db.run(
-      'INSERT INTO users (email, password, name) VALUES (?, ?, ?)',
-      [email, hashedPassword, name || 'User'],
-      function(err) {
-        if (err) {
-          if (err.message.includes('UNIQUE constraint failed')) {
-            return res.status(400).json({ error: 'Email already exists' });
-          }
-          console.error('Error registering user:', err);
-          return res.status(500).json({ error: 'Failed to register user' });
-        }
+    try {
+      const result = db.prepare(
+        'INSERT INTO users (email, password, name) VALUES (?, ?, ?)'
+      ).run(email, hashedPassword, name || 'User');
 
-        const token = generateToken(this.lastID);
-        res.json({
-          success: true,
-          token,
-          user: {
-            id: this.lastID,
-            email,
-            name: name || 'User'
-          }
-        });
+      const token = generateToken(result.lastInsertRowid);
+      res.json({
+        success: true,
+        token,
+        user: {
+          id: result.lastInsertRowid,
+          email,
+          name: name || 'User'
+        }
+      });
+    } catch (err) {
+      if (err.message.includes('UNIQUE constraint failed')) {
+        return res.status(400).json({ error: 'Email already exists' });
       }
-    );
+      console.error('Error registering user:', err);
+      return res.status(500).json({ error: 'Failed to register user' });
+    }
   } catch (error) {
     console.error('Error registering user:', error);
     res.status(500).json({ error: 'Failed to register user' });
@@ -55,33 +53,27 @@ router.post('/login', async (req, res) => {
     }
 
     const db = getDatabase();
+    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
-    db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
-      if (err) {
-        console.error('Error logging in:', err);
-        return res.status(500).json({ error: 'Failed to login' });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    const token = generateToken(user.id);
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name
       }
-
-      if (!user) {
-        return res.status(401).json({ error: 'Invalid email or password' });
-      }
-
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-
-      if (!isPasswordValid) {
-        return res.status(401).json({ error: 'Invalid email or password' });
-      }
-
-      const token = generateToken(user.id);
-      res.json({
-        success: true,
-        token,
-        user: {
-          id: user.id,
-          email: user.email,
-          name: user.name
-        }
-      });
     });
   } catch (error) {
     console.error('Error logging in:', error);

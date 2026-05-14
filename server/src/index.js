@@ -28,9 +28,9 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-async function startServer() {
+function startServer() {
   try {
-    await initDatabase();
+    initDatabase();
     console.log('Database initialized');
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);

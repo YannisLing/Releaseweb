@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ALL_PRACTICES, type Practice, type Exercise, type Event, type Feeling } from '../data/workbookPractices';
 import { emotionCategories } from '../data/emotions';
 import { api } from '../services/api';
+import { usePractice } from '../context/PracticeContext';
 import BreatheCircle from '../components/BreatheCircle';
 import './PracticeDetailPage.css';
 
@@ -17,6 +18,7 @@ type ReleaseState = {
 export default function PracticeDetailPage() {
   const { practiceId } = useParams<{ practiceId: string }>();
   const navigate = useNavigate();
+  const { updatePracticeProgress } = usePractice();
   const [practice, setPractice] = useState<Practice | null>(null);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [currentAttempt, setCurrentAttempt] = useState(1);
@@ -207,7 +209,6 @@ export default function PracticeDetailPage() {
         i === currentExerciseIndex ? updatedExercise : e
       );
 
-
       setPractice({
         ...practice,
         exercises: updatedExercises
@@ -397,6 +398,13 @@ export default function PracticeDetailPage() {
       const isCompleted = newAttemptsMade >= practice.attemptsRequired;
 
       await api.updatePracticeProgress(practice.id, {
+        attemptsMade: newAttemptsMade,
+        attemptsRequired: practice.attemptsRequired,
+        completed: isCompleted
+      });
+
+      updatePracticeProgress(practice.id, {
+        practiceId: practice.id,
         attemptsMade: newAttemptsMade,
         attemptsRequired: practice.attemptsRequired,
         completed: isCompleted

@@ -1,45 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { ALL_PRACTICES, type Practice } from '../data/workbookPractices';
-import { api } from '../services/api';
+import { useNavigate } from 'react-router-dom';
+import { usePractice } from '../context/PracticeContext';
 import './PracticeListPage.css';
 
 export default function PracticeListPage() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [practices, setPractices] = useState<Practice[]>(ALL_PRACTICES);
+  const { practices, isLoading } = usePractice();
   const [currentPracticeIndex, setCurrentPracticeIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-
-  const loadProgress = async () => {
-    setLoading(true);
-    try {
-      const updatedPractices = [...ALL_PRACTICES];
-      
-      for (let i = 0; i < updatedPractices.length; i++) {
-        const practice = updatedPractices[i];
-        const progress = await api.getPracticeProgress(practice.id);
-        
-        if (progress) {
-          updatedPractices[i] = {
-            ...practice,
-            attemptsMade: progress.attempts_made,
-            completed: progress.completed === 1
-          };
-        }
-      }
-      
-      setPractices(updatedPractices);
-    } catch (error) {
-      console.error('Error loading practice progress:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadProgress();
-  }, [location.key]);
 
   useEffect(() => {
     const index = practices.findIndex(p => !p.completed);
@@ -57,7 +24,7 @@ export default function PracticeListPage() {
     return previousPractice.completed;
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>

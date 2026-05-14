@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { PracticeProvider } from './context/PracticeContext'
 import Header from './components/Header'
 import EmotionsPage from './pages/EmotionsPage'
 import RecordsPage from './pages/RecordsPage'
@@ -33,44 +34,46 @@ function AppContent() {
   }
   
   return (
-    <div className="app-container">
-      <div className="main-content">
-        <Header />
-        <Routes>
-          <Route path="/" element={
-            <ProtectedRoute>
-              <PracticeListPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/practice" element={
-            <ProtectedRoute>
-              <PracticeListPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/practice/:practiceId" element={
-            <ProtectedRoute>
-              <PracticeDetailPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/six-step" element={
-            <ProtectedRoute>
-              <SixStepReleasePage />
-            </ProtectedRoute>
-          } />
-          <Route path="/emotions" element={
-            <ProtectedRoute>
-              <EmotionsPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/records" element={
-            <ProtectedRoute>
-              <RecordsPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/donate" element={<DonatePage />} />
-        </Routes>
+    <PracticeProvider>
+      <div className="app-container">
+        <div className="main-content">
+          <Header />
+          <Routes>
+            <Route path="/" element={
+              <ProtectedRoute>
+                <PracticeListPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/practice" element={
+              <ProtectedRoute>
+                <PracticeListPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/practice/:practiceId" element={
+              <ProtectedRoute>
+                <PracticeDetailPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/six-step" element={
+              <ProtectedRoute>
+                <SixStepReleasePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/emotions" element={
+              <ProtectedRoute>
+                <EmotionsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/records" element={
+              <ProtectedRoute>
+                <RecordsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/donate" element={<DonatePage />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </PracticeProvider>
   )
 }
 

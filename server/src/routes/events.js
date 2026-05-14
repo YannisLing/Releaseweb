@@ -3,6 +3,57 @@ import { getDatabase } from '../database.js';
 
 const router = express.Router();
 
+router.post('/', (req, res) => {
+  try {
+    console.log('=== EVENT CREATE REQUEST START ===');
+    console.log('Request body:', JSON.stringify(req.body));
+    console.log('User ID from auth:', req.userId);
+
+    const { practiceId, exerciseId, situation } = req.body;
+    const userId = req.userId;
+
+    if (!userId) {
+      console.error('ERROR: userId is undefined/null');
+      return res.status(401).json({ error: 'Unauthorized: User not authenticated' });
+    }
+
+    if (!practiceId || !exerciseId) {
+      console.error('ERROR: Missing required fields - practiceId:', practiceId, 'exerciseId:', exerciseId);
+      return res.status(400).json({ error: 'Practice ID and exercise ID are required' });
+    }
+
+    console.log('Attempting to get database connection...');
+    const db = getDatabase();
+    console.log('Database connection obtained successfully');
+
+    const situationText = situation || '';
+
+    console.log('Preparing SQL statement...');
+    const stmt = db.prepare(
+      'INSERT INTO events (user_id, practice_id, exercise_id, situation) VALUES (?, ?, ?, ?)'
+    );
+    console.log('SQL statement prepared:', stmt);
+
+    console.log('Executing SQL with params:', [userId, practiceId, exerciseId, situationText]);
+    const result = stmt.run(userId, practiceId, exerciseId, situationText);
+    
+    console.log('SQL execution result:', result);
+    console.log('Event created successfully - lastInsertRowid:', result.lastInsertRowid);
+    
+    console.log('=== EVENT CREATE REQUEST END ===');
+    res.json({ id: result.lastInsertRowid, practiceId, exerciseId, situation: situationText });
+    
+  } catch (error) {
+    console.error('=== EVENT CREATE ERROR ===');
+    console.error('Error message:', error.message);
+    console.error('Error name:', error.name);
+    console.error('Error code:', error.code);
+    console.error('Error stack:', error.stack);
+    console.error('=== END ERROR ===');
+    res.status(500).json({ error: 'Failed to create event' });
+  }
+});
+
 router.get('/', (req, res) => {
   try {
     const db = getDatabase();
@@ -32,33 +83,6 @@ router.get('/practice/:practiceId', (req, res) => {
     console.error('Error fetching events:', error);
     console.error('Error stack:', error.stack);
     res.status(500).json({ error: 'Failed to fetch events' });
-  }
-});
-
-router.post('/', (req, res) => {
-  try {
-    const { practiceId, exerciseId, situation } = req.body;
-    const userId = req.userId;
-    const db = getDatabase();
-
-    console.log('Creating event with:', { practiceId, exerciseId, situation, userId });
-
-    if (!practiceId || !exerciseId) {
-      return res.status(400).json({ error: 'Practice ID and exercise ID are required' });
-    }
-
-    const situationText = situation || '';
-
-    const result = db.prepare(
-      'INSERT INTO events (user_id, practice_id, exercise_id, situation) VALUES (?, ?, ?, ?)'
-    ).run(userId, practiceId, exerciseId, situationText);
-    
-    console.log('Event created successfully:', result.lastInsertRowid);
-    res.json({ id: result.lastInsertRowid, practiceId, exerciseId, situation: situationText });
-  } catch (error) {
-    console.error('Error creating event:', error);
-    console.error('Error stack:', error.stack);
-    res.status(500).json({ error: 'Failed to create event' });
   }
 });
 

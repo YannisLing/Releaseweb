@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import sqlite3 from 'sqlite3';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -12,17 +12,26 @@ const schemaPath = path.join(__dirname, 'schema.sql');
 let db;
 
 const initDatabase = () => {
-    try {
-        db = new Database(dbPath);
-        console.log('Connected to the SQLite database.');
+    return new Promise((resolve, reject) => {
+        db = new sqlite3.Database(dbPath, (err) => {
+            if (err) {
+                console.error('Error opening database:', err.message);
+                reject(err);
+                return;
+            }
+            console.log('Connected to the SQLite database.');
 
-        const schema = fs.readFileSync(schemaPath, 'utf8');
-        db.exec(schema);
-        console.log('Database schema initialized successfully.');
-    } catch (err) {
-        console.error('Error initializing database:', err.message);
-        throw err;
-    }
+            const schema = fs.readFileSync(schemaPath, 'utf8');
+            db.exec(schema, (err) => {
+                if (err) {
+                    console.error('Error executing schema:', err.message);
+                } else {
+                    console.log('Database schema initialized successfully.');
+                }
+                resolve(db);
+            });
+        });
+    });
 };
 
 const getDatabase = () => {
@@ -34,12 +43,13 @@ const getDatabase = () => {
 
 const closeDatabase = () => {
     if (db) {
-        try {
-            db.close();
-            console.log('Database connection closed.');
-        } catch (err) {
-            console.error('Error closing database:', err.message);
-        }
+        db.close((err) => {
+            if (err) {
+                console.error('Error closing database:', err.message);
+            } else {
+                console.log('Database connection closed.');
+            }
+        });
     }
 };
 

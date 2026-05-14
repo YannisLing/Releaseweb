@@ -12,6 +12,7 @@ router.get('/', (req, res) => {
     res.json(events);
   } catch (error) {
     console.error('Error fetching events:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ error: 'Failed to fetch events' });
   }
 });
@@ -29,6 +30,7 @@ router.get('/practice/:practiceId', (req, res) => {
     res.json(events);
   } catch (error) {
     console.error('Error fetching events:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ error: 'Failed to fetch events' });
   }
 });
@@ -38,6 +40,8 @@ router.post('/', (req, res) => {
     const { practiceId, exerciseId, situation } = req.body;
     const userId = req.userId;
     const db = getDatabase();
+
+    console.log('Creating event with:', { practiceId, exerciseId, situation, userId });
 
     if (!practiceId || !exerciseId) {
       return res.status(400).json({ error: 'Practice ID and exercise ID are required' });
@@ -49,9 +53,11 @@ router.post('/', (req, res) => {
       'INSERT INTO events (user_id, practice_id, exercise_id, situation) VALUES (?, ?, ?, ?)'
     ).run(userId, practiceId, exerciseId, situationText);
     
+    console.log('Event created successfully:', result.lastInsertRowid);
     res.json({ id: result.lastInsertRowid, practiceId, exerciseId, situation: situationText });
   } catch (error) {
     console.error('Error creating event:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ error: 'Failed to create event' });
   }
 });
@@ -73,6 +79,7 @@ router.put('/:id', (req, res) => {
     res.json({ success: true, eventId: id });
   } catch (error) {
     console.error('Error updating event:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ error: 'Failed to update event' });
   }
 });
@@ -89,6 +96,7 @@ router.delete('/:id', (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error('Error deleting event:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ error: 'Failed to delete event' });
   }
 });

@@ -53,8 +53,9 @@ router.post('/', (req, res) => {
       'INSERT INTO events (user_id, practice_id, exercise_id, situation) VALUES (?, ?, ?, ?)'
     ).run(userId, practiceId, exerciseId, situationText);
     
-    console.log('Event created successfully:', result.lastInsertRowid);
-    res.json({ id: result.lastInsertRowid, practiceId, exerciseId, situation: situationText });
+    const eventId = Number(result.lastInsertRowid);
+    console.log('Event created successfully:', eventId);
+    res.json({ id: eventId, practiceId, exerciseId, situation: situationText });
   } catch (error) {
     console.error('Error creating event:', error);
     console.error('Error stack:', error.stack);

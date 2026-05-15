@@ -42,7 +42,8 @@ router.post('/', (req, res) => {
       'INSERT INTO feelings (event_id, name) VALUES (?, ?)'
     ).run(eventId, name);
     
-    res.json({ id: result.lastInsertRowid, eventId, name, released: false, feelingGood: false });
+    const feelingId = Number(result.lastInsertRowid);
+    res.json({ id: feelingId, eventId, name, released: false, feelingGood: false });
   } catch (error) {
     console.error('Error creating feeling:', error);
     res.status(500).json({ error: 'Failed to create feeling' });

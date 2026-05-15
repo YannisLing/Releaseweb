@@ -9,7 +9,7 @@ export default function SixStepReleasePage() {
   const sixSteps = [
     {
       step: 1,
-      question: '想要不受限制的自由超过想要其它的一切',
+      question: '想要不受限制的自由(让感觉更好一点/达到波澜不惊的状态)超过想要其它的一切',
       instruction: 'Deeply desire freedom from limitations more than anything else.'
     },
     {

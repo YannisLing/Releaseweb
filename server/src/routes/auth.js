@@ -21,12 +21,13 @@ router.post('/register', async (req, res) => {
         'INSERT INTO users (email, password, name) VALUES (?, ?, ?)'
       ).run(email, hashedPassword, name || 'User');
 
-      const token = generateToken(result.lastInsertRowid);
+      const userId = Number(result.lastInsertRowid);
+      const token = generateToken(userId);
       res.json({
         success: true,
         token,
         user: {
-          id: result.lastInsertRowid,
+          id: userId,
           email,
           name: name || 'User'
         }

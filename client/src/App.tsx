@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { PracticeProvider } from './context/PracticeContext'
 import Background from './components/Background'
@@ -21,8 +22,31 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
+// 导航顺序，用于判断切换方向
+const TAB_ORDER = ['/', '/six-step', '/emotions', '/records', '/donate']
+
+function getPageDepth(pathname: string): number {
+  // /practice 系列归入首页 tab
+  if (pathname === '/' || pathname.startsWith('/practice')) return 0
+  const idx = TAB_ORDER.indexOf(pathname)
+  return idx === -1 ? 0 : idx
+}
+
 function AppContent() {
   const { isAuthenticated } = useAuth()
+  const location = useLocation()
+  const [transitionDir, setTransitionDir] = useState<'forward' | 'backward'>('forward')
+  const prevDepthRef = useRef(0)
+
+  useEffect(() => {
+    const depth = getPageDepth(location.pathname)
+    if (depth > prevDepthRef.current) {
+      setTransitionDir('forward')
+    } else if (depth < prevDepthRef.current) {
+      setTransitionDir('backward')
+    }
+    prevDepthRef.current = depth
+  }, [location.pathname])
 
   if (!isAuthenticated) {
     return (
@@ -44,6 +68,7 @@ function AppContent() {
         <div className="app-container">
           <div className="main-content">
             <Header />
+            <div key={location.pathname} className={`page-transition ${transitionDir}`}>
             <Routes>
               <Route path="/" element={
                 <ProtectedRoute>
@@ -77,6 +102,7 @@ function AppContent() {
               } />
               <Route path="/donate" element={<DonatePage />} />
             </Routes>
+            </div>
           </div>
         </div>
       </PracticeProvider>

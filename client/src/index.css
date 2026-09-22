@@ -133,7 +133,54 @@ body *::-webkit-scrollbar {
 .main-content {
   width: 100%;
   max-width: 1180px;
+  transition: max-width 0.4s cubic-bezier(.4, 0, .2, 1);
   animation: fadeIn 0.4s ease;
+}
+
+/* 页面切换过渡动画 */
+.page-transition {
+  animation: pageEnter 0.35s cubic-bezier(.2, .7, .3, 1);
+}
+
+.page-transition.forward {
+  animation: pageEnterForward 0.35s cubic-bezier(.2, .7, .3, 1);
+}
+
+.page-transition.backward {
+  animation: pageEnterBackward 0.35s cubic-bezier(.2, .7, .3, 1);
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pageEnterForward {
+  from {
+    opacity: 0;
+    transform: translateX(24px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes pageEnterBackward {
+  from {
+    opacity: 0;
+    transform: translateX(-24px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
 }
 
 @keyframes fadeIn {

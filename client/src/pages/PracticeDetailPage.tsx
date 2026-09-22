@@ -34,6 +34,13 @@ export default function PracticeDetailPage() {
   const [loading, setLoading] = useState(true);
   const [selectedWant, setSelectedWant] = useState<string | null>(null);
   const emotionSlidesRef = useRef<HTMLDivElement | null>(null);
+  const categoryIndexRef = useRef<HTMLDivElement | null>(null);
+  const [indexThumb, setIndexThumb] = useState({ width: 100, left: 0 });
+  const indexDraggingRef = useRef<{ startX: number; startLeft: number } | null>(null);
+  const [activeEventIdx, setActiveEventIdx] = useState(0);
+  const eventsScrollRef = useRef<HTMLDivElement | null>(null);
+  const prevEventsLenRef = useRef(0);
+  const [descExpanded, setDescExpanded] = useState(false);
 
   const loadPracticeData = async () => {
     if (!practiceId) return;
@@ -95,6 +102,48 @@ export default function PracticeDetailPage() {
   }, [practiceId]);
 
   const currentExercise = practice?.exercises[currentExerciseIndex];
+
+  // 切换练习项时重置事件索引和描述折叠
+  useEffect(() => {
+    setActiveEventIdx(0);
+    prevEventsLenRef.current = 0;
+    setDescExpanded(false);
+  }, [currentExerciseIndex]);
+
+  // 新增事件后自动滚动到最后一张
+  useEffect(() => {
+    const len = currentExercise?.events.length ?? 0;
+    if (len > prevEventsLenRef.current && len > 0) {
+      setTimeout(() => scrollToEvent(len - 1), 80);
+    }
+    prevEventsLenRef.current = len;
+  }, [currentExercise?.events.length]);
+
+  const handleEventsScroll = () => {
+    const el = eventsScrollRef.current;
+    if (!el || el.children.length === 0) return;
+    const slideWidth = el.scrollWidth / el.children.length;
+    if (slideWidth <= 0) return;
+    const idx = Math.round(el.scrollLeft / slideWidth);
+    if (idx !== activeEventIdx && idx >= 0) {
+      setActiveEventIdx(idx);
+    }
+  };
+
+  const scrollToEvent = (idx: number) => {
+    const el = eventsScrollRef.current;
+    if (!el || el.children.length === 0) return;
+    const slideWidth = el.scrollWidth / el.children.length;
+    if (slideWidth <= 0) return;
+    el.scrollTo({ left: idx * slideWidth, behavior: 'smooth' });
+    setActiveEventIdx(idx);
+  };
+
+  const goPrevEvent = () => scrollToEvent(Math.max(0, activeEventIdx - 1));
+  const goNextEvent = () => {
+    const max = (currentExercise?.events.length ?? 1) - 1;
+    scrollToEvent(Math.min(max, activeEventIdx + 1));
+  };
 
   const addEvent = useCallback(async () => {
     if (!practice || !currentExercise) return;
@@ -529,19 +578,126 @@ export default function PracticeDetailPage() {
     setActiveCategoryIdx(idx)
   }
 
+  // 桌面端：滚轮转横向滑动
+  const handleSlidesWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    const el = emotionSlidesRef.current
+    if (!el) return
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      el.scrollLeft += e.deltaY
+    }
+  }
+
+  // 桌面端：鼠标拖拽滑动
+  const dragStateRef = useRef<{ startX: number; startLeft: number; dragging: boolean } | null>(null)
+
+  const handleSlidesMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = emotionSlidesRef.current
+    if (!el) return
+    dragStateRef.current = { startX: e.clientX, startLeft: el.scrollLeft, dragging: true }
+    el.style.cursor = 'grabbing'
+  }
+
+  const handleSlidesMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const st = dragStateRef.current
+    const el = emotionSlidesRef.current
+    if (!st || !st.dragging || !el) return
+    const dx = e.clientX - st.startX
+    el.scrollLeft = st.startLeft - dx
+  }
+
+  const handleSlidesMouseUp = () => {
+    const el = emotionSlidesRef.current
+    const st = dragStateRef.current
+    if (el) el.style.cursor = ''
+    if (st) {
+      st.dragging = false
+      dragStateRef.current = null
+    }
+  }
+
+  const goPrevCategory = () => {
+    const i = Math.max(0, activeCategoryIdx - 1)
+    scrollToCategory(i)
+  }
+  const goNextCategory = () => {
+    const i = Math.min(emotionCategories.length - 1, activeCategoryIdx + 1)
+    scrollToCategory(i)
+  }
+
+  // 索引滚动条同步
+  const updateIndexThumb = () => {
+    const el = categoryIndexRef.current
+    if (!el) return
+    const maxScroll = el.scrollWidth - el.clientWidth
+    if (maxScroll <= 0) {
+      setIndexThumb({ width: 100, left: 0 })
+      return
+    }
+    const thumbWidth = (el.clientWidth / el.scrollWidth) * 100
+    const thumbLeft = (el.scrollLeft / maxScroll) * (100 - thumbWidth)
+    setIndexThumb({ width: thumbWidth, left: thumbLeft })
+  }
+
+  const handleIndexScroll = () => {
+    updateIndexThumb()
+  }
+
+  // 索引滚动条拖拽
+  const handleThumbMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = categoryIndexRef.current
+    if (!el) return
+    indexDraggingRef.current = { startX: e.clientX, startLeft: el.scrollLeft }
+
+    const onMove = (ev: MouseEvent) => {
+      const drag = indexDraggingRef.current
+      const idxEl = categoryIndexRef.current
+      if (!drag || !idxEl) return
+      const trackEl = idxEl.parentElement?.querySelector('.category-scroll-indicator') as HTMLElement
+      if (!trackEl) return
+      const trackWidth = trackEl.clientWidth
+      const maxScroll = idxEl.scrollWidth - idxEl.clientWidth
+      const dx = ev.clientX - drag.startX
+      idxEl.scrollLeft = drag.startLeft + (dx / trackWidth) * maxScroll
+    }
+    const onUp = () => {
+      indexDraggingRef.current = null
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+    }
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+    e.preventDefault()
+  }
+
+  // 面板打开时初始化滚动条
+  useEffect(() => {
+    if (showEmotionPicker) {
+      setTimeout(updateIndexThumb, 50)
+    }
+  }, [showEmotionPicker])
+
   const renderEmotionPicker = (eventId: string) => {
     if (showEmotionPicker !== eventId) return null
+
+    const eventForPicker = currentExercise?.events.find(e => e.id === eventId)
 
     return (
       <div className="emotion-picker-modal" onClick={() => setShowEmotionPicker(null)}>
         <div className="emotion-picker" onClick={e => e.stopPropagation()}>
           <div className="emotion-picker-header">
-            <h3>选择感受</h3>
+            <div className="picker-title-group">
+              <h3>选择感受</h3>
+              {eventForPicker && (
+                <span className="picker-event-name">
+                  {eventForPicker.situation || '未命名事件'}
+                </span>
+              )}
+            </div>
             <button className="close-picker-icon" onClick={() => setShowEmotionPicker(null)}>✕</button>
           </div>
 
           {/* 顶部索引条 - 横向滚动 */}
-          <div className="emotion-category-index">
+          <div className="emotion-category-index" ref={categoryIndexRef} onScroll={handleIndexScroll}>
             {emotionCategories.map((cat, i) => (
               <button
                 key={cat.id}
@@ -555,38 +711,66 @@ export default function PracticeDetailPage() {
             ))}
           </div>
 
-          {/* 分类内容 - 横向滑动，每页一个分类 */}
-          <div
-            className="emotion-category-slides"
-            ref={emotionSlidesRef}
-            onScroll={handleEmotionSlidesScroll}
-          >
-            {emotionCategories.map(cat => (
-              <div key={cat.id} className="emotion-category-slide">
-                <div className="slide-header" style={{ color: cat.color }}>
-                  <span className="slide-emoji">{cat.emoji}</span>
-                  <span className="slide-name">{cat.name}</span>
-                  <span className="slide-count">{cat.emotions.length}</span>
-                </div>
-                <div className="emotion-grid">
-                  {cat.emotions.map((em, i) => (
-                    <button
-                      key={i}
-                      className="emotion-option"
-                      onClick={() => {
-                        addFeelingToEvent(eventId, em);
-                        setShowEmotionPicker(null);
-                      }}
-                    >
-                      {em}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
+          {/* 可拖动滚动条 */}
+          <div className="category-scroll-indicator">
+            <div
+              className="category-scroll-thumb"
+              style={{ width: `${indexThumb.width}%`, left: `${indexThumb.left}%` }}
+              onMouseDown={handleThumbMouseDown}
+            />
           </div>
 
-          <div className="slide-hint">← 左右滑动切换分类 · 点击感受即添加 →</div>
+          {/* 分类内容 - 横向滑动，每页一个分类 */}
+          <div className="emotion-category-stage">
+            <button
+              className="slide-nav-btn slide-nav-prev"
+              onClick={goPrevCategory}
+              disabled={activeCategoryIdx === 0}
+              aria-label="上一类"
+            >‹</button>
+            <div
+              className="emotion-category-slides"
+              ref={emotionSlidesRef}
+              onScroll={handleEmotionSlidesScroll}
+              onWheel={handleSlidesWheel}
+              onMouseDown={handleSlidesMouseDown}
+              onMouseMove={handleSlidesMouseMove}
+              onMouseUp={handleSlidesMouseUp}
+              onMouseLeave={handleSlidesMouseUp}
+            >
+              {emotionCategories.map(cat => (
+                <div key={cat.id} className="emotion-category-slide">
+                  <div className="slide-header" style={{ color: cat.color }}>
+                    <span className="slide-emoji">{cat.emoji}</span>
+                    <span className="slide-name">{cat.name}</span>
+                    <span className="slide-count">{cat.emotions.length}</span>
+                  </div>
+                  <div className="emotion-grid">
+                    {cat.emotions.map((em, i) => (
+                      <button
+                        key={i}
+                        className="emotion-option"
+                        onClick={() => {
+                          addFeelingToEvent(eventId, em);
+                          setShowEmotionPicker(null);
+                        }}
+                      >
+                        {em}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button
+              className="slide-nav-btn slide-nav-next"
+              onClick={goNextCategory}
+              disabled={activeCategoryIdx === emotionCategories.length - 1}
+              aria-label="下一类"
+            >›</button>
+          </div>
+
+          <div className="slide-hint">← 滑动 / 拖拽 / 滚轮切换分类 · 点击感受即添加 →</div>
         </div>
       </div>
     )
@@ -607,147 +791,182 @@ export default function PracticeDetailPage() {
 
   return (
     <div className="practice-detail-page">
-      <div className="page-header">
-        <button className="back-btn" onClick={goBack}>
-          ← 返回练习列表
-        </button>
+      {/* 顶部栏 */}
+      <header className="pd-header">
+        <button className="back-btn" onClick={goBack}>← 返回</button>
         <div className="practice-info">
           <h1>{practice.name}</h1>
           <div className="practice-meta">
             <span className="pages">{practice.pages}</span>
-            <span className="attempt">
-              第 {currentAttempt}/{practice.attemptsRequired} 次
-            </span>
+            <span className="attempt">第 {currentAttempt}/{practice.attemptsRequired} 次</span>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="exercise-tabs">
-        {practice.exercises.map((ex, i) => (
-          <button
-            key={ex.id}
-            className={`tab-btn ${i === currentExerciseIndex ? 'active' : ''}`}
-            onClick={() => setCurrentExerciseIndex(i)}
+      {/* 主体：桌面两栏，移动单列 */}
+      <div className="pd-main">
+        {/* 左栏：练习项导航 + 描述 + 操作 */}
+        <aside className="pd-sidebar">
+          {/* 移动端：横向 tab；桌面端：垂直列表 */}
+          <nav className="pd-exercise-nav">
+            {practice.exercises.map((ex, i) => (
+              <button
+                key={ex.id}
+                className={`pd-exercise-item ${i === currentExerciseIndex ? 'active' : ''}`}
+                onClick={() => setCurrentExerciseIndex(i)}
+              >
+                <span className="pd-exercise-num">{i + 1}</span>
+                <span className="pd-exercise-name">{ex.name}</span>
+              </button>
+            ))}
+          </nav>
+
+          <div className={`pd-description ${descExpanded ? 'expanded' : 'collapsed'}`}>
+            <button
+              className="pd-desc-toggle"
+              onClick={() => setDescExpanded(v => !v)}
+            >
+              <span className="pd-desc-label">练习说明</span>
+              <span className="pd-desc-arrow">{descExpanded ? '▾' : '▸'}</span>
+            </button>
+            {descExpanded && <p>{currentExercise.description}</p>}
+          </div>
+
+          <div className="pd-actions">
+            <button className="add-event-btn" onClick={addEvent}>
+              + 添加新事件
+            </button>
+            <button className="next-btn" onClick={goToNextExercise}>
+              {currentExerciseIndex < practice.exercises.length - 1
+                ? '下一个子练习 →'
+                : practice.attemptsMade < practice.attemptsRequired
+                ? '完成本次 →'
+                : '完成练习 ✓'}
+            </button>
+          </div>
+        </aside>
+
+        {/* 右栏：事件卡片轮播 */}
+        <section className="pd-events">
+          <div className="pd-events-bar">
+            <button
+              className="pd-arrow"
+              onClick={goPrevEvent}
+              disabled={activeEventIdx === 0 || currentExercise.events.length === 0}
+            >‹</button>
+            <span className="pd-events-count">
+              {currentExercise.events.length > 0
+                ? `事件 ${activeEventIdx + 1} / ${currentExercise.events.length}`
+                : '暂无事件'}
+            </span>
+            <button
+              className="pd-arrow"
+              onClick={goNextEvent}
+              disabled={activeEventIdx >= currentExercise.events.length - 1 || currentExercise.events.length === 0}
+            >›</button>
+          </div>
+
+          <div
+            className="pd-events-track"
+            ref={eventsScrollRef}
+            onScroll={handleEventsScroll}
           >
-            {ex.name}
-          </button>
-        ))}
-      </div>
+            {currentExercise.events.length === 0 ? (
+              <div className="pd-empty">
+                <div className="pd-empty-icon">📝</div>
+                <p className="pd-empty-title">还没有事件</p>
+                <p className="pd-empty-hint">点击「+ 添加新事件」开始记录</p>
+              </div>
+            ) : (
+              currentExercise.events.map((event, idx) => (
+                <div key={event.id} className={`pd-event-card ${event.completed ? 'completed' : ''}`}>
+                  <div className="pd-event-top">
+                    <span className="pd-event-tag">事件 {idx + 1}</span>
+                    <button
+                      className="delete-event-btn"
+                      onClick={() => deleteEvent(event.id)}
+                    >删除</button>
+                  </div>
 
-      <div className="exercise-description">
-        <p>{currentExercise.description}</p>
-      </div>
+                  <input
+                    type="text"
+                    value={event.situation}
+                    onChange={(e) => updateEventSituation(event.id, e.target.value)}
+                    onBlur={() => {
+                      if (practice && currentExercise) {
+                        const localEvent = currentExercise.events.find(ev => ev.id === event.id);
+                        if (localEvent && localEvent.situation !== event.situation) {
+                          api.updateEvent(event.id, { situation: event.situation });
+                        }
+                      }
+                    }}
+                    placeholder="输入事件描述..."
+                    className="pd-event-input"
+                  />
 
-      <div className="events-container">
-        {currentExercise.events.map(event => (
-          <div key={event.id} className={`event-card ${event.completed ? 'completed' : ''}`}>
-            <div className="event-header">
-              <input
-                type="text"
-                value={event.situation}
-                onChange={(e) => updateEventSituation(event.id, e.target.value)}
-                onBlur={() => {
-                  if (practice && currentExercise) {
-                    const localEvent = currentExercise.events.find(ev => ev.id === event.id);
-                    if (localEvent && localEvent.situation !== event.situation) {
-                      api.updateEvent(event.id, { situation: event.situation });
-                    }
-                  }
-                }}
-                placeholder="输入事件..."
-                className="event-input"
-              />
-              <button
-                className="add-feeling-btn"
-                onClick={() => {
-                  setActiveCategoryIdx(0)
-                  emotionSlidesRef.current?.scrollTo({ left: 0 })
-                  setShowEmotionPicker(event.id)
-                }}
-              >
-                + 添加感受
-              </button>
-              <button
-                className="delete-event-btn"
-                onClick={() => deleteEvent(event.id)}
-                title="删除事件"
-              >
-                删除
-              </button>
-            </div>
+                  <div className="pd-feelings-head">
+                    <span className="pd-feelings-title">
+                      感受 <b>{event.feelings.length}</b>
+                    </span>
+                    <button
+                      className="add-feeling-btn"
+                      onClick={() => {
+                        setActiveCategoryIdx(0);
+                        emotionSlidesRef.current?.scrollTo({ left: 0 });
+                        setShowEmotionPicker(event.id);
+                      }}
+                    >+ 添加感受</button>
+                  </div>
 
-            {renderEmotionPicker(event.id)}
-
-            <div className="feelings-list">
-              {event.feelings.map(feeling => (
-                <div key={feeling.id} className={`feeling-item ${feeling.feelingGood ? 'released' : ''}`}>
-                  <div className="feeling-name">
-                    {feeling.feelingGood ? (
-                      <span className="released-text">✓ {feeling.name}</span>
+                  <div className="pd-feelings">
+                    {event.feelings.length === 0 ? (
+                      <p className="pd-no-feelings">还没有感受，点击上方添加</p>
                     ) : (
-                      feeling.name
+                      event.feelings.map(feeling => (
+                        <div key={feeling.id} className={`pd-feeling ${feeling.feelingGood ? 'released' : ''}`}>
+                          <span className="pd-feeling-name">
+                            {feeling.feelingGood ? '✓ ' : ''}{feeling.name}
+                          </span>
+                          <div className="pd-feeling-actions">
+                            {!feeling.released ? (
+                              <button
+                                className="release-btn"
+                                onClick={() => startRelease(event.id, feeling)}
+                              >释放</button>
+                            ) : (
+                              <span className="completed-badge">已释放</span>
+                            )}
+                            <button
+                              className="delete-feeling-btn"
+                              onClick={() => deleteFeeling(event.id, feeling.id)}
+                            >删除</button>
+                          </div>
+                        </div>
+                      ))
                     )}
                   </div>
 
-                  {!feeling.released ? (
-                    <div className="feeling-actions">
-                      <button
-                        className="release-btn"
-                        onClick={() => startRelease(event.id, feeling)}
-                      >
-                        释放
-                      </button>
-                      <button
-                        className="delete-feeling-btn"
-                        onClick={() => deleteFeeling(event.id, feeling.id)}
-                        title="删除感受"
-                      >
-                        删除
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="feeling-actions">
-                      <span className="completed-badge">已释放</span>
-                      <button
-                        className="delete-feeling-btn"
-                        onClick={() => deleteFeeling(event.id, feeling.id)}
-                        title="删除感受"
-                      >
-                        删除
-                      </button>
+                  {event.feelings.length > 0 && (
+                    <div className="pd-event-status" onClick={() => toggleEventCompleted(event.id)}>
+                      {event.completed ? (
+                        <span className="all-done">✓ 全部释放（点击切换）</span>
+                      ) : (
+                        <span className="pending">
+                          {event.feelings.filter(f => f.feelingGood).length}/{event.feelings.length} 已释放（点击切换）
+                        </span>
+                      )}
                     </div>
                   )}
-                </div>
-              ))}
-            </div>
 
-            {event.feelings.length > 0 && (
-              <div className="event-status" onClick={() => toggleEventCompleted(event.id)}>
-                {event.completed ? (
-                  <span className="all-done">所有感受已释放 ✓ (点击切换)</span>
-                ) : (
-                  <span className="pending">
-                    {event.feelings.filter(f => f.feelingGood).length}/{event.feelings.length} 感受已释放 (点击切换)
-                  </span>
-                )}
-              </div>
+                </div>
+              ))
             )}
           </div>
-        ))}
+        </section>
       </div>
 
-      <div className="action-buttons">
-        <button className="add-event-btn" onClick={addEvent}>
-          + 添加新事件
-        </button>
-        <button className="next-btn" onClick={goToNextExercise}>
-          {currentExerciseIndex < practice.exercises.length - 1
-            ? '下一个子练习 →'
-            : practice.attemptsMade < practice.attemptsRequired
-            ? '完成本次，开始下一次 →'
-            : '完成练习 ✓'}
-        </button>
-      </div>
+      {/* 情绪选择浮动面板（从页面根级别渲染，避免被卡片 overflow/backdrop-filter 困住） */}
+      {showEmotionPicker && renderEmotionPicker(showEmotionPicker)}
 
       {renderReleaseFlow()}
     </div>

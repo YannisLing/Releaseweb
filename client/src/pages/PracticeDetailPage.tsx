@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ALL_PRACTICES, type Practice, type Exercise, type Event, type Feeling } from '../data/workbookPractices';
 import { emotionCategories } from '../data/emotions';
@@ -30,8 +30,10 @@ export default function PracticeDetailPage() {
     step: 0
   });
   const [showEmotionPicker, setShowEmotionPicker] = useState<string | null>(null);
+  const [activeCategoryIdx, setActiveCategoryIdx] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selectedWant, setSelectedWant] = useState<string | null>(null);
+  const emotionSlidesRef = useRef<HTMLDivElement | null>(null);
 
   const loadPracticeData = async () => {
     if (!practiceId) return;
@@ -511,41 +513,83 @@ export default function PracticeDetailPage() {
     );
   };
 
+  const handleEmotionSlidesScroll = () => {
+    const el = emotionSlidesRef.current
+    if (!el) return
+    const idx = Math.round(el.scrollLeft / el.clientWidth)
+    if (idx !== activeCategoryIdx && idx >= 0 && idx < emotionCategories.length) {
+      setActiveCategoryIdx(idx)
+    }
+  }
+
+  const scrollToCategory = (idx: number) => {
+    const el = emotionSlidesRef.current
+    if (!el) return
+    el.scrollTo({ left: idx * el.clientWidth, behavior: 'smooth' })
+    setActiveCategoryIdx(idx)
+  }
+
   const renderEmotionPicker = (eventId: string) => {
-    if (showEmotionPicker !== eventId) return null;
+    if (showEmotionPicker !== eventId) return null
 
     return (
       <div className="emotion-picker-modal" onClick={() => setShowEmotionPicker(null)}>
         <div className="emotion-picker" onClick={e => e.stopPropagation()}>
-          <h3>选择感受</h3>
-          {emotionCategories.map(cat => (
-            <div key={cat.id} className="emotion-category">
-              <h4>{cat.emoji} {cat.name}</h4>
-              <div className="emotion-grid">
-                {cat.emotions.map((em, i) => (
-                  <button
-                    key={i}
-                    className="emotion-option"
-                    onClick={() => {
-                      addFeelingToEvent(eventId, em);
-                      setShowEmotionPicker(null);
-                    }}
-                  >
-                    {em}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-          <button
-            className="close-picker-btn"
-            onClick={() => setShowEmotionPicker(null)}
+          <div className="emotion-picker-header">
+            <h3>选择感受</h3>
+            <button className="close-picker-icon" onClick={() => setShowEmotionPicker(null)}>✕</button>
+          </div>
+
+          {/* 顶部索引条 - 横向滚动 */}
+          <div className="emotion-category-index">
+            {emotionCategories.map((cat, i) => (
+              <button
+                key={cat.id}
+                className={`category-tab ${i === activeCategoryIdx ? 'active' : ''}`}
+                style={{ ['--cat-color' as any]: cat.color }}
+                onClick={() => scrollToCategory(i)}
+              >
+                <span className="cat-emoji">{cat.emoji}</span>
+                <span className="cat-name">{cat.name}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* 分类内容 - 横向滑动，每页一个分类 */}
+          <div
+            className="emotion-category-slides"
+            ref={emotionSlidesRef}
+            onScroll={handleEmotionSlidesScroll}
           >
-            关闭
-          </button>
+            {emotionCategories.map(cat => (
+              <div key={cat.id} className="emotion-category-slide">
+                <div className="slide-header" style={{ color: cat.color }}>
+                  <span className="slide-emoji">{cat.emoji}</span>
+                  <span className="slide-name">{cat.name}</span>
+                  <span className="slide-count">{cat.emotions.length}</span>
+                </div>
+                <div className="emotion-grid">
+                  {cat.emotions.map((em, i) => (
+                    <button
+                      key={i}
+                      className="emotion-option"
+                      onClick={() => {
+                        addFeelingToEvent(eventId, em);
+                        setShowEmotionPicker(null);
+                      }}
+                    >
+                      {em}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="slide-hint">← 左右滑动切换分类 · 点击感受即添加 →</div>
         </div>
       </div>
-    );
+    )
   };
 
   if (loading) {
@@ -615,7 +659,11 @@ export default function PracticeDetailPage() {
               />
               <button
                 className="add-feeling-btn"
-                onClick={() => setShowEmotionPicker(event.id)}
+                onClick={() => {
+                  setActiveCategoryIdx(0)
+                  emotionSlidesRef.current?.scrollTo({ left: 0 })
+                  setShowEmotionPicker(event.id)
+                }}
               >
                 + 添加感受
               </button>

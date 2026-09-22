@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { PracticeProvider } from './context/PracticeContext'
+import Background from './components/Background'
 import Header from './components/Header'
 import EmotionsPage from './pages/EmotionsPage'
 import RecordsPage from './pages/RecordsPage'
@@ -12,68 +13,74 @@ import DonatePage from './pages/DonatePage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth()
-  
+
   if (!isAuthenticated) {
     return <AuthPage onLoginSuccess={() => window.location.reload()} />
   }
-  
+
   return <>{children}</>
 }
 
 function AppContent() {
   const { isAuthenticated } = useAuth()
-  
+
   if (!isAuthenticated) {
     return (
-      <div className="app-container">
-        <div className="main-content">
-          <AuthPage onLoginSuccess={() => window.location.reload()} />
+      <>
+        <Background />
+        <div className="app-container">
+          <div className="main-content">
+            <AuthPage onLoginSuccess={() => window.location.reload()} />
+          </div>
         </div>
-      </div>
+      </>
     )
   }
-  
+
   return (
-    <PracticeProvider>
-      <div className="app-container">
-        <div className="main-content">
-          <Header />
-          <Routes>
-            <Route path="/" element={
-              <ProtectedRoute>
-                <PracticeListPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/practice" element={
-              <ProtectedRoute>
-                <PracticeListPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/practice/:practiceId" element={
-              <ProtectedRoute>
-                <PracticeDetailPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/six-step" element={
-              <ProtectedRoute>
-                <SixStepReleasePage />
-              </ProtectedRoute>
-            } />
-            <Route path="/emotions" element={
-              <ProtectedRoute>
-                <EmotionsPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/records" element={
-              <ProtectedRoute>
-                <RecordsPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/donate" element={<DonatePage />} />
-          </Routes>
+    <>
+      <Background />
+      <PracticeProvider>
+        <div className="app-container">
+          <div className="main-content">
+            <Header />
+            <Routes>
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <PracticeListPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/practice" element={
+                <ProtectedRoute>
+                  <PracticeListPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/practice/:practiceId" element={
+                <ProtectedRoute>
+                  <PracticeDetailPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/six-step" element={
+                <ProtectedRoute>
+                  <SixStepReleasePage />
+                </ProtectedRoute>
+              } />
+              <Route path="/emotions" element={
+                <ProtectedRoute>
+                  <EmotionsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/records" element={
+                <ProtectedRoute>
+                  <RecordsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/donate" element={<DonatePage />} />
+            </Routes>
+          </div>
         </div>
-      </div>
-    </PracticeProvider>
+      </PracticeProvider>
+    </>
   )
 }
 

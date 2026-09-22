@@ -28,7 +28,7 @@ export function PracticeProvider({ children }: { children: ReactNode }) {
   
   const CACHE_DURATION = 5 * 60 * 1000; // 5分钟缓存
 
-  const loadProgress = useCallback(async (forceRefresh = false) => {
+  const loadProgress = useCallback(async (forceRefresh = false, signal?: AbortSignal) => {
     const now = Date.now();
     
     if (!forceRefresh && now - cacheTimestamp < CACHE_DURATION && progressMap.size > 0) {
@@ -42,6 +42,7 @@ export function PracticeProvider({ children }: { children: ReactNode }) {
       const updatedPractices = [...ALL_PRACTICES];
       
       for (let i = 0; i < updatedPractices.length; i++) {
+        if (signal?.aborted) return;
         const practice = updatedPractices[i];
         try {
           const progress = await api.getPracticeProgress(practice.id);
@@ -69,6 +70,10 @@ export function PracticeProvider({ children }: { children: ReactNode }) {
             });
           }
         } catch (error) {
+          // 静默处理 abort 错误（StrictMode 双挂载或卸载时正常出现）
+          if (signal?.aborted || (error instanceof Error && (error.name === 'AbortError' || error.message === 'Failed to fetch'))) {
+            return;
+          }
           console.error(`Error loading progress for ${practice.id}:`, error);
           newProgressMap.set(practice.id, {
             practiceId: practice.id,
@@ -79,13 +84,17 @@ export function PracticeProvider({ children }: { children: ReactNode }) {
         }
       }
       
+      if (signal?.aborted) return;
       setPractices(updatedPractices);
       setProgressMap(newProgressMap);
       setCacheTimestamp(now);
     } catch (error) {
+      if (signal?.aborted || (error instanceof Error && (error.name === 'AbortError' || error.message === 'Failed to fetch'))) {
+        return;
+      }
       console.error('Error loading practice progress:', error);
     } finally {
-      setIsLoading(false);
+      if (!signal?.aborted) setIsLoading(false);
     }
   }, [cacheTimestamp, progressMap.size]);
 
@@ -116,7 +125,9 @@ export function PracticeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    loadProgress();
+    const controller = new AbortController();
+    loadProgress(false, controller.signal);
+    return () => controller.abort();
   }, [loadProgress]);
 
   return (

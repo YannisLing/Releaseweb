@@ -1133,7 +1133,7 @@
 @media (max-width: 768px) {
   .practice-detail-page {
     padding: 4px 12px 8px;
-    height: calc(100vh - 175px);
+    height: calc(100vh - 55px);
   }
 
   /* 单列布局 */

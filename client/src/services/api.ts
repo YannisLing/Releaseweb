@@ -203,4 +203,27 @@ export const api = {
     }
     return response.json();
   },
+
+  async resetAllData() {
+    const response = await fetch(`${API_BASE_URL}/records/reset-practice`, {
+      method: 'POST',
+      headers: createHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to reset data');
+    }
+    return response.json();
+  },
+
+  async importRecords(records: any[]) {
+    const response = await fetch(`${API_BASE_URL}/records/import`, {
+      method: 'POST',
+      headers: createHeaders(),
+      body: JSON.stringify({ records }),
+    });
+    if (!response.ok) {
+      throw new Error('Failed to import records');
+    }
+    return response.json();
+  },
 };

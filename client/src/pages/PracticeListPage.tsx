@@ -105,7 +105,7 @@ export default function PracticeListPage() {
       </div>
 
       <div className="footer-hint">
-        <p>💡 提示：必须完成前一个练习才能开始下一个练习</p>
+        <p>💡 提示：必须完成前一个练习才能开始下一个练习,与92视频搭配最佳</p>
       </div>
     </div>
   );

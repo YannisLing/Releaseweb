@@ -85,4 +85,64 @@ router.delete('/', (req, res) => {
   }
 });
 
+// 批量导入释放记录
+router.post('/import', (req, res) => {
+  try {
+    const { records } = req.body;
+    const userId = req.userId;
+    const db = getDatabase();
+
+    if (!Array.isArray(records)) {
+      return res.status(400).json({ error: 'records must be an array' });
+    }
+
+    const insert = db.prepare(
+      'INSERT INTO release_records (user_id, feeling_name, intensity, note, created_at) VALUES (?, ?, ?, ?, ?)'
+    );
+
+    let imported = 0;
+    const insertMany = db.transaction((items) => {
+      for (const r of items) {
+        const name = r.feelingName || r.feeling_name || r['感受'];
+        if (!name) continue;
+        const intensity = Number(r.intensity ?? r['强度'] ?? 5) || 5;
+        const note = r.note || r['备注'] || '';
+        let createdAt = r.createdAt || r.created_at || r['日期'];
+        if (!createdAt) {
+          createdAt = new Date().toISOString();
+        } else if (!/\d{4}-\d{2}-\d{2}T/.test(createdAt)) {
+          const d = new Date(createdAt);
+          createdAt = isNaN(d.getTime()) ? new Date().toISOString() : d.toISOString();
+        }
+        insert.run(userId, name, intensity, note, createdAt);
+        imported++;
+      }
+    });
+    insertMany(records);
+
+    res.json({ success: true, imported });
+  } catch (error) {
+    console.error('Error importing records:', error);
+    res.status(500).json({ error: 'Failed to import records' });
+  }
+});
+
+// 重置该用户的全部练习数据：事件、感受、练习进度、释放记录
+router.post('/reset-practice', (req, res) => {
+  try {
+    const userId = req.userId;
+    const db = getDatabase();
+
+    db.prepare('DELETE FROM feelings WHERE event_id IN (SELECT id FROM events WHERE user_id = ?)').run(userId);
+    db.prepare('DELETE FROM events WHERE user_id = ?').run(userId);
+    db.prepare('DELETE FROM practice_progress WHERE user_id = ?').run(userId);
+    db.prepare('DELETE FROM release_records WHERE user_id = ?').run(userId);
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error resetting practice data:', error);
+    res.status(500).json({ error: 'Failed to reset practice data' });
+  }
+});
+
 export default router;

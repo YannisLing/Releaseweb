@@ -8,7 +8,7 @@ const CATEGORY_META: Record<string, { en: string; desc: string }> = {
   wannianjuhui: { en: 'APATHY', desc: '能量近乎冻结的状态——觉得被困住、无望而麻木，连挣扎的力气都被抽空。' },
   beiku: { en: 'GRIEF', desc: '心随失去而碎——哀伤、思念与泪水汇成河流，渴望一份已经不在的温暖。' },
   kongju: { en: 'FEAR', desc: '对未知与危险的警觉——紧绷、不安、想逃，把自己缩进一个小小的壳里。' },
-  tanqiu: { en: 'GREED', desc: '总觉得还不够——渴望抓取更多、更远、更快，却始终填不满内心的洞。' },
+  tanqiu: { en: 'LUST', desc: '总觉得还不够——渴望抓取更多、更远、更快，却始终填不满内心的洞。' },
   fennu: { en: 'ANGER', desc: '能量开始上升——火花迸发，想反击、想改变，愤怒之下往往藏着未被看见的痛。' },
   zirenzihao: { en: 'PRIDE', desc: '用优越感筑起高墙——把自己抬高的同时，也把真实的感受挡在了门外。' },
   wuwei: { en: 'COURAGE', desc: '能量开始流动——敢于面对、敢于行动，恐惧仍在却不再被它支配。' },
@@ -176,7 +176,7 @@ export default function EmotionsPage() {
       {/* 页面头部 */}
       <header className="emo-head">
         <span className="emo-eyebrow">情 绪 觉 察</span>
-        <h1 className="emo-title">APFLG情绪表</h1>
+        <h1 className="emo-title">AGFLAP情绪表</h1>
         <p className="emo-subtitle">从 万 念 俱 灰 ， 走 向 释 放</p>
       </header>
 

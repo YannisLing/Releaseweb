@@ -14,23 +14,23 @@ export default function SixStepReleasePage() {
     },
     {
       step: 2,
-      question: '让自己通过这个方法获得无拘无束，轻松自在',
+      question: '决定让自己通过这个方法获得自由',
       instruction: 'Decide that you can do this method and be free.'
     },
     {
       step: 3,
-      question: '看到您所有的感受都是三大基本欲望的表现形式',
+      question: '看到您所有的感受都源自想要认同、想要控制和想要安全，它们只是潜意识里的生存程序，觉察并释放它们',
       instruction: '释放想要被认同/被爱、想要控制、直到最后放下对死亡的恐惧。',
       subWants: ['想要认同/被爱', '想要控制', '想要安全/生存']
     },
     {
       step: 4,
-      question: '随时随地、持续不断地释放',
+      question: '随时随地、不受限制地持续释放',
       instruction: 'Release continuously, wherever you are, whenever you can.'
     },
     {
       step: 5,
-      question: '如果您觉得被困住了，放下想要改变困境的欲望',
+      question: '如果您觉得卡住了，放下想要控制',
       instruction: 'If you feel stuck, let go of the wanting to change the stuckness.'
     },
     {

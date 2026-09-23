@@ -108,33 +108,25 @@
 }
 
 .qr-code-container {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
-  padding: 18px;
+  padding: 14px;
+  display: inline-block;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
 
-.qr-placeholder {
-  width: 160px;
-  height: 160px;
-  border: 2px dashed rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin: 0 auto;
+.qr-image {
+  display: block;
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
-.qr-icon {
-  font-size: 2.4em;
-}
-
-.qr-text {
-  font-size: 0.82em;
-  color: #5d6577;
-  letter-spacing: 0.04em;
+.qr-image:hover {
+  transform: scale(1.02);
+  transition: transform 0.25s ease;
 }
 
 .donate-tip {
@@ -174,28 +166,23 @@
   line-height: 1.6;
 }
 
-/* ---------- 移动端：支付方式横向滑动 ---------- */
+/* ---------- 移动端 ---------- */
 @media (max-width: 600px) {
   .donate-card {
     padding: 28px 18px;
   }
 
   .donate-methods {
-    display: flex;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    gap: 14px;
-    padding: 4px 0 12px;
-    margin: 0 -4px 22px;
-    -webkit-overflow-scrolling: touch;
-    justify-content: flex-start;
+    margin-bottom: 22px;
   }
 
   .donate-option {
-    flex: 0 0 80%;
-    scroll-snap-align: center;
-    max-width: 240px;
+    max-width: 100%;
+  }
+
+  .qr-image {
+    width: 180px;
+    height: 180px;
   }
 
   .disclaimer {

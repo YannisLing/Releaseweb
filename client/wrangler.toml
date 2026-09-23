@@ -1,0 +1,12 @@
+name = "sedona-release"
+compatibility_date = "2024-09-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sedona-db"
+database_id = "f2792892-bd8f-4b16-be4c-84df16a12013"
+
+[vars]
+JWT_SECRET = "5eJH05N7LjfB3BMsjyNCJa8ZbA1qI6bbex3Hn2Okr9U="

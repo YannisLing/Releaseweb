@@ -8,5 +8,4 @@ binding = "DB"
 database_name = "sedona-db"
 database_id = "f2792892-bd8f-4b16-be4c-84df16a12013"
 
-[vars]
-JWT_SECRET = "5eJH05N7LjfB3BMsjyNCJa8ZbA1qI6bbex3Hn2Okr9U="
+# JWT_SECRET 请在 Cloudflare Pages 控制台 → Settings → Environment Variables 中设置

@@ -32,6 +32,7 @@ export default function EmotionsPage() {
   const emotionGridRef = useRef<HTMLDivElement | null>(null)
   const longPressTimerRef = useRef<number | null>(null)
   const longPressFiredRef = useRef(false)
+  const isTouchingRef = useRef(false)
 
   // 加载持久化标记
   useEffect(() => {
@@ -52,7 +53,8 @@ export default function EmotionsPage() {
   }, [])
 
   // 长按 + 单击处理
-  const handleTagStart = (emotion: string) => {
+  const handleTagStart = (emotion: string, fromTouch = false) => {
+    if (fromTouch) isTouchingRef.current = true
     longPressFiredRef.current = false
     longPressTimerRef.current = window.setTimeout(() => {
       longPressFiredRef.current = true
@@ -223,11 +225,14 @@ export default function EmotionsPage() {
               key={index}
               className={`tag ${tagSize(emotion)} ${markedEmotions.has(emotion) ? 'marked' : ''}`}
               style={{ animationDelay: `${Math.min(index, 24) * 22}ms` }}
-              onMouseDown={() => handleTagStart(emotion)}
-              onMouseUp={() => handleTagEnd(emotion)}
+              onMouseDown={() => { if (!isTouchingRef.current) handleTagStart(emotion) }}
+              onMouseUp={() => { if (!isTouchingRef.current) handleTagEnd(emotion) }}
               onMouseLeave={handleTagLeave}
-              onTouchStart={() => handleTagStart(emotion)}
-              onTouchEnd={() => handleTagEnd(emotion)}
+              onTouchStart={() => handleTagStart(emotion, true)}
+              onTouchEnd={() => {
+                handleTagEnd(emotion)
+                setTimeout(() => { isTouchingRef.current = false }, 500)
+              }}
             >
               {emotion}
             </button>
@@ -256,11 +261,14 @@ export default function EmotionsPage() {
                 <span
                   key={index}
                   className={`emotion-tag ${markedEmotions.has(emotion) ? 'marked' : ''}`}
-                  onMouseDown={() => handleTagStart(emotion)}
-                  onMouseUp={() => handleTagEnd(emotion)}
+                  onMouseDown={() => { if (!isTouchingRef.current) handleTagStart(emotion) }}
+                  onMouseUp={() => { if (!isTouchingRef.current) handleTagEnd(emotion) }}
                   onMouseLeave={handleTagLeave}
-                  onTouchStart={() => handleTagStart(emotion)}
-                  onTouchEnd={() => handleTagEnd(emotion)}
+                  onTouchStart={() => handleTagStart(emotion, true)}
+                  onTouchEnd={() => {
+                    handleTagEnd(emotion)
+                    setTimeout(() => { isTouchingRef.current = false }, 500)
+                  }}
                 >
                   {emotion}
                 </span>
